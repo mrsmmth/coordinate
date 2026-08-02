@@ -1,17 +1,9 @@
-# COORDINATE v0.3.1 AUDIO & CHORD-HEAD FIX
+# COORDINATE v0.3.4
 
-- iOS/Browser AudioContext resume fix
-- Persistent audio engine with safe stop
-- Larger piano-like envelope
-- Draggable white chord-head handles
-- 16th-grid snapping
-- Playback/MIDI timing follows dragged positions
-- PWA cache version updated
+本編音声再生修正版。
 
-
-## v0.3.2
-- iOS/PWA向けAudioContext強制アンロック
-- 再生ボタンpointerdown時に無音バッファを即時start
-- 音量ゲイン調整
-- クリックの開始時刻修正
-- 音声開始失敗時の画面表示
+- 欠落していたBPM拍長計算を追加
+- 診断用テスト音を削除
+- 再生ボタンから本編を直接再生
+- AudioContext起動後にイベントをスケジュール
+- エラー内容を画面表示

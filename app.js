@@ -182,6 +182,8 @@ function updateSummary(){const p=PATTERNS.find(x=>x.id===state.pattern);els.back
 function meterLabel(){return state.meter===6?'6/8':`${state.meter}/4`;}
 function flashSummary(){els.engineSummary.animate([{opacity:.2},{opacity:1}],{duration:350});}
 
+function secondsPerBeat(){return 60/Math.max(1,Number(state.bpm)||120);}
+
 function audioContext(){
  if(!state.audio || state.audio.state==='closed'){
    const Ctx=window.AudioContext||window.webkitAudioContext;
@@ -197,20 +199,20 @@ function stopAudio(){
  state.isPlaying=false;updatePlayButtons();
 }
 function updatePlayButtons(){const txt=state.isPlaying?'■ 停止':'▶ 再生';if($('playBacking'))$('playBacking').textContent=txt;if($('globalPlay'))$('globalPlay').innerHTML=`<span>${state.isPlaying?'■':'▶'}</span> ${state.isPlaying?'STOP':'PLAY'}`;}
-function unlockAudioNow(){
+async function unlockAudioNow(){
  try{
    const ctx=audioContext();
-   // THREE PITCH と同じ、ユーザー操作内で即座に発音する方式。
-   playPianoTone(72,0,.08,.035,ctx);
+   if(ctx.state==='suspended')await ctx.resume();
+   if(ctx.state!=='running')throw new Error('AudioContext state: '+ctx.state);
    state.audioUnlocked=true;
    return ctx;
  }catch(err){console.error('Audio unlock failed',err);return null;}
 }
-function togglePlay(backing){
+async function togglePlay(backing){
  if(state.isPlaying){stopAudio();return;}
- const ctx=unlockAudioNow();
- if(!ctx){showAudioError('音声エンジンを作れませんでした');return;}
- window.setTimeout(()=>play(backing,ctx).catch(err=>{console.error(err);showAudioError('再生処理でエラーが発生しました');stopAudio();}),30);
+ const ctx=await unlockAudioNow();
+ if(!ctx){showAudioError('音声エンジンを開始できませんでした');return;}
+ try{await play(backing,ctx);}catch(err){console.error(err);showAudioError('再生処理でエラーが発生しました: '+err.message);stopAudio();}
 }
 function showAudioError(message){
  const target=$('engineSummary');
