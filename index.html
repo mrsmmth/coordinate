@@ -10,7 +10,7 @@
   <title>COORDINATE</title>
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="apple-touch-icon" href="./icon-192.png">
-  <link rel="stylesheet" href="./style.css?v=040">
+  <link rel="stylesheet" href="./style.css?v=050">
 </head>
 <body data-theme="ocean">
 <main class="app-shell">
@@ -59,7 +59,7 @@
         <div class="panel-head"><div><span>LIBRARY</span><h2>Progression Browser</h2></div><b id="resultCount">0</b></div>
         <label class="search-box"><span>⌕</span><input id="keywordInput" type="search" placeholder="王道 / おしゃれ / 4536"></label>
         <div class="filter-title">GENRE</div><div id="genreFilters" class="chips"></div>
-        <div class="filter-title">MOOD</div><div id="moodFilters" class="chips"></div>
+        <div class="filter-title">MOOD / USE（複数選択）</div><div id="moodFilters" class="chips"></div>
         <div id="progressionList" class="progression-list"></div>
       </aside>
 
@@ -73,6 +73,10 @@
           <section class="frame-panel"><div class="panel-head compact"><div><span>RELATED</span><h2>Similar</h2></div></div><div id="similarList" class="compact-list"></div></section>
           <section class="frame-panel"><div class="panel-head compact"><div><span>REPLACE</span><h2>Substitute</h2></div></div><div id="substituteTarget" class="target-tabs"></div><div id="substituteList" class="compact-list"></div></section>
         </div>
+        <div class="split-panels">
+          <section class="frame-panel"><div class="panel-head compact"><div><span>CONNECT BEFORE</span><h2>前に置きやすい進行</h2></div></div><div id="previousList" class="compact-list"></div></section>
+          <section class="frame-panel"><div class="panel-head compact"><div><span>CONNECT NEXT</span><h2>次に置きやすい進行</h2></div></div><div id="nextList" class="compact-list"></div></section>
+        </div>
       </div>
     </div>
   </section>
@@ -81,13 +85,13 @@
     <div class="backing-layout">
       <section class="frame-panel source-strip">
         <div class="panel-head compact"><div><span>LINKED PROGRESSION</span><h2>Backing Source</h2></div></div>
-        <div id="backingChords" class="chord-strip mini"></div><div class="timing-help">白いコードブロックの両端で開始・終了を調整。中央をドラッグすると長さを保ったまま移動します。</div><div id="chordTimingGrid" class="chord-timing-grid"></div>
+        <div id="backingChords" class="chord-strip mini"></div><div class="timing-help">コード同士の境界線をドラッグ。左が伸びると右が同じだけ縮み、全体周期は維持されます（16分グリッド）。</div><div id="chordTimingGrid" class="boundary-timeline"></div>
       </section>
 
       <section class="frame-panel theory-panel">
         <div class="panel-head"><div><span>01 / FOUNDATION</span><h2>Theory Pattern</h2></div><p>骨格を選び、右側でどこまでも崩す</p></div>
         <div id="patternCards" class="pattern-cards"></div>
-        <div class="mini-selects"><label>GRID<select id="gridSelect"><option value="8">8 GRID</option><option value="16">16 GRID</option><option value="24">24 / TRIPLET</option></select></label><label>STYLE FILTER<select id="styleFilter"><option value="ALL">ALL</option><option>王道</option><option>バラード</option><option>ポップ</option><option>ロック</option><option>スイング</option><option>3拍子</option></select></label></div>
+        <div class="mini-selects"><label>LEFT HAND<select id="leftPatternSelect"><option value="rootWhole">ルート白玉</option><option value="rootFifth">ルート＋5度</option><option value="octave">低音オクターブ</option><option value="rootThenFifth">ルート→5度</option><option value="rootThenOctave">ルート→オクターブ</option><option value="walk">ルート→5度→オクターブ</option><option value="beat13">1拍目ルート・3拍目5度</option><option value="waltz">ワルツ型</option><option value="sixEight">6/8型</option><option value="sync">シンコペーション型</option></select></label><label>RIGHT HAND<select id="rightPatternSelect"><option value="auto">選択スタイル連動</option><option value="block">ブロックコード</option><option value="quarter">4分コード</option><option value="eighth">8分コード</option><option value="offbeat">裏拍コード</option><option value="arpUp">アルペジオ上昇</option><option value="arpDown">アルペジオ下降</option><option value="arpWave">往復アルペジオ</option><option value="alternate">左右交互</option><option value="ballad">バラード型</option><option value="pop">ポップ型</option><option value="rock">ロック型</option><option value="city">シティポップ型</option><option value="waltz">3拍子型</option><option value="sixEight">6/8型</option><option value="sync">シンコペーション型</option></select></label><label>TIME GRID<select id="gridSelect"><option value="16">16分固定</option></select></label><label>STYLE FILTER<select id="styleFilter"><option value="ALL">ALL</option><option>王道</option><option>バラード</option><option>ポップ</option><option>ロック</option><option>スイング</option><option>3拍子</option></select></label></div>
       </section>
 
       <section class="frame-panel engine-panel">
@@ -137,7 +141,7 @@
 </main>
 
 <dialog id="guideDialog" class="guide-dialog"><form method="dialog" class="guide-card"><button class="dialog-close" value="close">×</button><span>COORDINATE</span><h2>音楽を選び、崩し、MIDIへ。</h2><p>数値はドラッグで滑らかに変更できます。上下左右どちらへ動かしても操作でき、ダブルタップ／ダブルクリックで直接入力できます。</p><p>BACKING ENGINEではセオリーパターンを骨格に、各ノブで演奏を調整します。白いコードブロックは両端で開始・終了を調整でき、中央ドラッグで長さを保ったまま移動します。すべて16分音符へ吸着します。</p><button class="primary-action wide" value="ok">OK</button></form></dialog>
-<script src="./app.js?v=040"></script>
+<script src="./app.js?v=050"></script>
 <script>if('serviceWorker' in navigator){addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js'));}</script>
 </body>
 </html>
