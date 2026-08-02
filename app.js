@@ -77,7 +77,7 @@ const PATTERNS=[
 const state={
  theme:'ocean',key:0,bpm:120,meter:4,genre:'ALL',mood:'ALL',keyword:'',current:TEMPLATES[0],degrees:[4,5,3,6],substituteIndex:0,
  pattern:'block',grid:16,click:false,countIn:false,clickVolume:65,randomNotes:4,freedom:35,complexity:45,density:55,variation:35,rangeMotion:30,octave:30,swing:0,humanize:15,accentWidth:55,
- rangeLow:36,rangeHigh:84,melodic:65,chordChance:45,chordOffsets:[],accents:[3,0,1,0,2,0,1,0,3,0,1,0,2,0,1,0],audio:null,master:null,sources:[],timers:[],lastEvents:null,seed:1,isPlaying:false,stopAt:0
+ rangeLow:36,rangeHigh:84,melodic:65,chordChance:45,chordOffsets:[],accents:[3,0,1,0,2,0,1,0,3,0,1,0,2,0,1,0],audio:null,master:null,audioUnlocked:false,sources:[],timers:[],lastEvents:null,seed:1,isPlaying:false,stopAt:0
 };
 const $=id=>document.getElementById(id);
 const els={};
@@ -103,6 +103,7 @@ function bind(){
  els.gridSelect.addEventListener('change',()=>{state.grid=+els.gridSelect.value;if(state.grid===24&&state.swing<40)setParam('swing',50);updateSummary();});
  els.styleFilter.addEventListener('change',renderPatternCards);
  setupDragValues();setupKnobs();setupDualRange();
+ ['globalPlay','playProgression','playBacking'].forEach(id=>{const b=$(id);if(b)b.addEventListener('pointerdown',unlockAudioNow,{passive:true});});
 }
 function setupDragValues(){document.querySelectorAll('.value-drag').forEach(el=>makeDragControl(el,el.dataset.param));}
 function attachDoubleTap(el,fn){let last=0;el.addEventListener('pointerup',e=>{if(e.pointerType!=='touch')return;const now=Date.now();if(now-last<340){e.preventDefault();fn();last=0;}else last=now;});}
@@ -182,12 +183,12 @@ function meterLabel(){return state.meter===6?'6/8':`${state.meter}/4`;}
 function flashSummary(){els.engineSummary.animate([{opacity:.2},{opacity:1}],{duration:350});}
 
 function audioContext(){
- if(!state.audio){
+ if(!state.audio || state.audio.state==='closed'){
    const Ctx=window.AudioContext||window.webkitAudioContext;
    if(!Ctx)throw new Error('Web Audio API is not supported');
    state.audio=new Ctx();
    state.master=state.audio.createGain();
-   state.master.gain.value=.92;
+   state.master.gain.value=1.0;
    state.master.connect(state.audio.destination);
  }
  return state.audio;
@@ -198,13 +199,39 @@ function stopAudio(){
  state.isPlaying=false;updatePlayButtons();
 }
 function updatePlayButtons(){const txt=state.isPlaying?'■ 停止':'▶ 再生';const global=state.isPlaying?'■ STOP':'▶ PLAY';if($('playBacking'))$('playBacking').textContent=txt;if($('globalPlay'))$('globalPlay').innerHTML=`<span>${state.isPlaying?'■':'▶'}</span> ${state.isPlaying?'STOP':'PLAY'}`;}
-function togglePlay(backing){if(state.isPlaying){stopAudio();return;}play(backing);}
-async function play(backing){
+function unlockAudioNow(){
+ try{
+   const ctx=audioContext();
+   if(ctx.state==='suspended')ctx.resume().catch(()=>{});
+   // iOS Safari/PWAでは、ユーザー操作と同じイベント内で音源をstartする必要がある。
+   const buffer=ctx.createBuffer(1,1,ctx.sampleRate);
+   const source=ctx.createBufferSource();
+   const gain=ctx.createGain();
+   gain.gain.value=.00001;
+   source.buffer=buffer;source.connect(gain).connect(state.master||ctx.destination);source.start(0);
+   state.audioUnlocked=true;
+   return ctx;
+ }catch(err){console.error('Audio unlock failed',err);return null;}
+}
+function togglePlay(backing){
+ if(state.isPlaying){stopAudio();return;}
+ const ctx=unlockAudioNow();
+ if(!ctx){showAudioError('音声エンジンを作れませんでした');return;}
+ play(backing,ctx);
+}
+function showAudioError(message){
+ const target=$('engineSummary');
+ if(target){target.textContent='⚠ '+message+'。端末音量と消音設定を確認し、もう一度再生してください。';target.classList.add('audio-error');}
+}
+async function play(backing,ctx=audioContext()){
  stopAudio();
- let ctx;
- try{ctx=audioContext();if(ctx.state==='suspended')await ctx.resume();}
- catch(err){console.error(err);alert('音声エンジンを開始できませんでした。もう一度再生を押してください。');return;}
+ try{
+   if(ctx.state==='suspended')await ctx.resume();
+   if(ctx.state!=='running')throw new Error('AudioContext state: '+ctx.state);
+ }
+ catch(err){console.error(err);showAudioError('音声の開始がブロックされました');return;}
  state.isPlaying=true;updatePlayButtons();
+ $('engineSummary')?.classList.remove('audio-error');
  const countBeats=state.countIn?(state.meter===6?6:state.meter):0;
  const delay=countBeats*secondsPerBeat();
  const lead=.06;
@@ -214,8 +241,8 @@ async function play(backing){
  const end=Math.max(0,...events.map(e=>e.time+e.duration))+delay+lead+.2;
  state.timers.push(setTimeout(stopAudio,end*1000));
 }
-function scheduleClick(ctx,countBeats,delay,includeMain){const beatsPerBar=state.meter===6?6:state.meter,total=countBeats+(includeMain?state.degrees.length*beatsPerBar:state.degrees.length*beatsPerBar);for(let i=0;i<total;i++){if(i>=countBeats&&!state.click)continue;const t=i*secondsPerBeat();const strong=i%beatsPerBar===0;scheduleTone(ctx,t,.045,strong?1400:900,Math.max(.015,state.clickVolume/100*.09),true);}}
-function scheduleNotes(ctx,time,duration,notes,velocity=90){notes.forEach((n,i)=>{const freq=440*Math.pow(2,(n-69)/12);scheduleTone(ctx,time,duration,freq,Math.max(.025,velocity/127*.12)/(1+i*.07),false);});}
+function scheduleClick(ctx,countBeats,delay,includeMain){const beatsPerBar=state.meter===6?6:state.meter,total=countBeats+state.degrees.length*beatsPerBar;for(let i=0;i<total;i++){if(i>=countBeats&&!state.click)continue;const t=delay+i*secondsPerBeat();const strong=i%beatsPerBar===0;scheduleTone(ctx,t,.055,strong?1500:950,Math.max(.025,state.clickVolume/100*.13),true);}}
+function scheduleNotes(ctx,time,duration,notes,velocity=90){notes.forEach((n,i)=>{const freq=440*Math.pow(2,(n-69)/12);scheduleTone(ctx,time,duration,freq,Math.max(.045,velocity/127*.20)/(1+i*.08),false);});}
 function scheduleTone(ctx,time,duration,freq,gainValue,click){
  const o=ctx.createOscillator(),g=ctx.createGain(),f=ctx.createBiquadFilter();
  const start=ctx.currentTime+Math.max(0,time),end=start+Math.max(.06,duration);
