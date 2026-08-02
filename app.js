@@ -7,9 +7,57 @@ const DEGREE_TRIADS=[
   {quality:'maj',intervals:[0,4,7]},{quality:'min',intervals:[0,3,7]},{quality:'min',intervals:[0,3,7]},
   {quality:'maj',intervals:[0,4,7]},{quality:'maj',intervals:[0,4,7]},{quality:'min',intervals:[0,3,7]},{quality:'dim',intervals:[0,3,6]}
 ];
-const TEMPLATES=[
- ['王道 4536','4536',['J-POP','アニソン'],['王道','エモい','サビ'],5],['カノン系 1564','1564',['J-POP','バラード'],['王道','切ない','サビ'],5],['小室系 6451','6451',['J-POP','90s'],['王道','力強い','サビ'],5],['循環 1625','1625',['J-POP','Soul'],['王道','おしゃれ','Aメロ'],4],['ポップ 6415','6415',['J-POP','Pop'],['明るい','王道','サビ'],5],['爽快 1456','1456',['J-POP','Rock'],['明るい','爽やか','サビ'],4],['切なめ 6345','6345',['J-POP','バラード'],['切ない','エモい','Bメロ'],4],['上昇感 4565','4565',['J-POP','アニソン'],['壮大','力強い','サビ'],4],['帰還 2516','2516',['Jazz','Soul'],['おしゃれ','夜','Aメロ'],4],['定番 251','251',['Jazz','Soul'],['王道','おしゃれ','解決'],5],['ツーファイブ連結 3625','3625',['Jazz','R&B'],['おしゃれ','都会的','Aメロ'],4],['ジャズ循環 6251','6251',['Jazz','R&B'],['おしゃれ','切ない','夜'],5],['ブルース寄り 1411','1411',['Blues','Rock'],['王道','渋い','Aメロ'],4],['ロック直進 1454','1454',['Rock'],['力強い','シンプル','Aメロ'],4],['パワーポップ 1645','1645',['Rock','Pop'],['明るい','爽やか','サビ'],4],['オルタナ 6145','6145',['Rock','Indie'],['エモい','個性的','サビ'],3],['R&B 4362','4362',['R&B','Soul'],['おしゃれ','夜','Aメロ'],3],['R&B 6413','6413',['R&B','Neo Soul'],['おしゃれ','切ない','夜'],3],['都会的 3426','3426',['R&B','City Pop'],['おしゃれ','都会的','Aメロ'],3],['シティポップ 2645','2645',['City Pop','J-POP'],['おしゃれ','夜','Bメロ'],4],['EDM 4561','4561',['EDM','Future Bass'],['壮大','エモい','サビ'],4],['Future Bass 6341','6341',['EDM','Future Bass'],['エモい','おしゃれ','サビ'],3],['House 1645','1645',['EDM','House'],['明るい','反復','サビ'],4],['劇伴 6412','6412',['劇伴','Game'],['壮大','切ない','展開'],3],['劇伴 4361','4361',['劇伴','Anime'],['エモい','壮大','展開'],3],['不穏 6713','6713',['劇伴','Game'],['緊張感','個性的','Bメロ'],2],['幻想 3614','3614',['劇伴','Fantasy'],['幻想的','切ない','Aメロ'],3],['ワルツ王道 1451','1451',['Waltz','バラード'],['王道','優雅','3拍子'],4],['ワルツ切なめ 6415','6415',['Waltz','劇伴'],['切ない','優雅','3拍子'],4],['6/8 バラード 1564','1564',['6/8','バラード'],['王道','切ない','ゆったり'],5],['6/8 壮大 4536','4536',['6/8','劇伴'],['壮大','エモい','ゆったり'],4],['シンプル 1415','1415',['Folk','Pop'],['シンプル','王道','Aメロ'],4],['フォーク 1541','1541',['Folk','J-POP'],['温かい','王道','Aメロ'],4],['爽やか 4156','4156',['J-POP','Pop'],['爽やか','明るい','サビ'],4],['泣き 6453','6453',['J-POP','バラード'],['切ない','泣ける','サビ'],4],['浮遊 4316','4316',['Indie','Neo Soul'],['おしゃれ','浮遊感','Aメロ'],3],['少し変 3514','3514',['Indie','劇伴'],['個性的','おしゃれ','展開'],2]
-].map((x,i)=>({id:i,name:x[0],degrees:x[1].split('').map(Number),genres:x[2],moods:x[3],spread:x[4]}));
+const TEMPLATE_ROWS=[
+ ['王道進行 4536','4536',['J-POP','アニソン'],['王道','エモい','サビ'],5,'4小節'],
+ ['カノン進行 15634145','15634145',['J-POP','バラード'],['王道','切ない','サビ'],5,'8小節'],
+ ['小室進行 6451','6451',['J-POP','90s'],['王道','力強い','サビ'],5,'4小節'],
+ ['丸ノ内進行 4361','4361',['J-POP','City Pop'],['おしゃれ','都会的','Aメロ'],4,'4小節'],
+ ['循環進行 1625','1625',['J-POP','Soul'],['王道','おしゃれ','Aメロ'],4,'4小節'],
+ ['ポップ定番 6415','6415',['J-POP','Pop'],['明るい','王道','サビ'],5,'4小節'],
+ ['レット・イット・ビー系 1564','1564',['Pop','Rock'],['王道','温かい','サビ'],5,'4小節'],
+ ['四度上昇 1456','1456',['J-POP','Rock'],['明るい','爽やか','サビ'],4,'4小節'],
+ ['下降ベース系 15654325','15654325',['J-POP','バラード'],['切ない','王道','サビ'],4,'8小節'],
+ ['ツーファイブワン 251','251',['Jazz','Soul'],['王道','おしゃれ','解決'],5,'3小節'],
+ ['リズムチェンジ系 3625','3625',['Jazz','R&B'],['おしゃれ','都会的','Aメロ'],4,'4小節'],
+ ['ジャズ循環 6251','6251',['Jazz','R&B'],['おしゃれ','切ない','夜'],5,'4小節'],
+ ['ターンアラウンド 1625','1625',['Jazz','Soul'],['循環','王道','終止'],4,'4小節'],
+ ['ブルース基本 1411','1411',['Blues','Rock'],['王道','渋い','Aメロ'],4,'4小節'],
+ ['ロック直進 1454','1454',['Rock'],['力強い','シンプル','Aメロ'],4,'4小節'],
+ ['パワーポップ 1645','1645',['Rock','Pop'],['明るい','爽やか','サビ'],4,'4小節'],
+ ['オルタナ系 6145','6145',['Rock','Indie'],['エモい','個性的','サビ'],3,'4小節'],
+ ['R&B循環 4362','4362',['R&B','Soul'],['おしゃれ','夜','Aメロ'],3,'4小節'],
+ ['ネオソウル系 6413','6413',['R&B','Neo Soul'],['おしゃれ','切ない','夜'],3,'4小節'],
+ ['都会的循環 3426','3426',['R&B','City Pop'],['おしゃれ','都会的','Aメロ'],3,'4小節'],
+ ['シティポップ系 2645','2645',['City Pop','J-POP'],['おしゃれ','夜','Bメロ'],4,'4小節'],
+ ['EDMアンセム 4561','4561',['EDM','Future Bass'],['壮大','エモい','サビ'],4,'4小節'],
+ ['Future Bass系 6341','6341',['EDM','Future Bass'],['エモい','おしゃれ','サビ'],3,'4小節'],
+ ['House循環 1645','1645',['EDM','House'],['明るい','反復','サビ'],4,'4小節'],
+ ['劇伴・余韻 6412','6412',['劇伴','Game'],['壮大','切ない','展開'],3,'4小節'],
+ ['劇伴・高揚 4361','4361',['劇伴','Anime'],['エモい','壮大','展開'],3,'4小節'],
+ ['不穏循環 6713','6713',['劇伴','Game'],['緊張感','個性的','Bメロ'],2,'4小節'],
+ ['幻想循環 3614','3614',['劇伴','Fantasy'],['幻想的','切ない','Aメロ'],3,'4小節'],
+ ['ワルツ基本 1451','1451',['Waltz','バラード'],['王道','優雅','3拍子'],4,'4小節'],
+ ['ワルツ切なめ 6415','6415',['Waltz','劇伴'],['切ない','優雅','3拍子'],4,'4小節'],
+ ['6/8バラード 1564','1564',['6/8','バラード'],['王道','切ない','ゆったり'],5,'4小節'],
+ ['6/8アンセム 4536','4536',['6/8','劇伴'],['壮大','エモい','ゆったり'],4,'4小節'],
+ ['フォーク基本 1541','1541',['Folk','J-POP'],['温かい','王道','Aメロ'],4,'4小節'],
+ ['爽やかポップ 4156','4156',['J-POP','Pop'],['爽やか','明るい','サビ'],4,'4小節'],
+ ['泣き進行 6453','6453',['J-POP','バラード'],['切ない','泣ける','サビ'],4,'4小節'],
+ ['浮遊系 4316','4316',['Indie','Neo Soul'],['おしゃれ','浮遊感','Aメロ'],3,'4小節'],
+ ['ドゥーワップ進行 1645','1645',['Oldies','Pop'],['懐かしい','王道','明るい'],5,'4小節'],
+ ['アンダルシア進行 6713','6713',['Flamenco','劇伴'],['緊張感','情熱的','展開'],3,'4小節'],
+ ['パッヘルベル完全形 15634145','15634145',['Classical','J-POP'],['王道','循環','壮大'],5,'8小節'],
+ ['50s循環 1645','1645',['Oldies','Ballad'],['懐かしい','甘い','王道'],5,'4小節'],
+ ['サビ終止 4531','4531',['J-POP','アニソン'],['解決','壮大','サビ'],4,'4小節'],
+ ['Aメロ安定 1415','1415',['J-POP','Folk'],['シンプル','安定','Aメロ'],4,'4小節'],
+ ['Bメロ上昇 2345','2345',['J-POP','アニソン'],['上昇','期待感','Bメロ'],4,'4小節'],
+ ['切ない下降 6543','6543',['J-POP','Ballad'],['切ない','下降','Bメロ'],4,'4小節'],
+ ['ドラマチック 4563','4563',['J-POP','劇伴'],['ドラマチック','エモい','サビ'],4,'4小節'],
+ ['明暗反転 1436','1436',['J-POP','Indie'],['個性的','明暗','展開'],3,'4小節'],
+ ['終わらない循環 4516','4516',['J-POP','Pop'],['循環','爽やか','サビ'],4,'4小節'],
+ ['余白のある進行 6142','6142',['Indie','劇伴'],['余韻','静か','Aメロ'],3,'4小節']
+];
+const TEMPLATES=TEMPLATE_ROWS.map((x,i)=>({id:i,name:x[0],degrees:x[1].split('').map(Number),genres:x[2],moods:x[3],spread:x[4],cycleLabel:x[5]}));
 
 const PATTERNS=[
  {id:'block',name:'Block Theory',desc:'拍頭を和音で支える',tags:['王道','シンプル']},
@@ -29,13 +77,13 @@ const PATTERNS=[
 const state={
  theme:'ocean',key:0,bpm:120,meter:4,genre:'ALL',mood:'ALL',keyword:'',current:TEMPLATES[0],degrees:[4,5,3,6],substituteIndex:0,
  pattern:'block',grid:16,click:false,countIn:false,clickVolume:65,randomNotes:4,freedom:35,complexity:45,density:55,variation:35,rangeMotion:30,octave:30,swing:0,humanize:15,accentWidth:55,
- rangeLow:36,rangeHigh:84,accents:[3,0,1,0,2,0,1,0,3,0,1,0,2,0,1,0],audio:null,timers:[],lastEvents:null,seed:1
+ rangeLow:36,rangeHigh:84,melodic:65,chordChance:45,chordOffsets:[],accents:[3,0,1,0,2,0,1,0,3,0,1,0,2,0,1,0],audio:null,timers:[],lastEvents:null,seed:1,isPlaying:false,stopAt:0
 };
 const $=id=>document.getElementById(id);
 const els={};
 
 function init(){
- ['themeSelect','meterSelect','keySelect','genreFilters','moodFilters','keywordInput','progressionList','resultCount','currentName','spreadStars','currentChords','similarList','substituteTarget','substituteList','backingChords','patternCards','gridSelect','styleFilter','accentButtons','backingSummary','engineSummary','guideDialog','rangeFill','rangeLowHandle','rangeHighHandle','rangeLowLabel','rangeHighLabel','rangeReadout'].forEach(id=>els[id]=$(id));
+ ['themeSelect','meterSelect','keySelect','genreFilters','moodFilters','keywordInput','progressionList','resultCount','currentName','spreadStars','currentChords','similarList','substituteTarget','substituteList','backingChords','patternCards','gridSelect','styleFilter','accentButtons','backingSummary','engineSummary','guideDialog','rangeFill','rangeLowHandle','rangeHighHandle','rangeLowLabel','rangeHighLabel','rangeReadout','cycleInfo','chordTimingGrid'].forEach(id=>els[id]=$(id));
  NOTE_NAMES.forEach((n,i)=>els.keySelect.add(new Option(n,n,i===0,i===0)));
  renderFilters();renderPatternCards();renderAccents();bind();selectTemplate(TEMPLATES[0]);updateAllControls();
  const saved=localStorage.getItem('coordinate-theme');if(saved&&['ocean','minimal','junk','pop'].includes(saved)){state.theme=saved;els.themeSelect.value=saved;document.body.dataset.theme=saved;}
@@ -49,9 +97,9 @@ function bind(){
  $('clickToggle').addEventListener('change',e=>state.click=e.target.checked);
  $('countInToggle').addEventListener('change',e=>state.countIn=e.target.checked);
  $('guideButton').addEventListener('click',()=>els.guideDialog.showModal());
- $('playProgression').addEventListener('click',()=>play(false));$('globalPlay').addEventListener('click',()=>play(document.querySelector('[data-tab="backing"]').classList.contains('active')));
- $('globalStop').addEventListener('click',stopAudio);$('exportChordsMidi').addEventListener('click',()=>exportMidi(false));
- $('playBacking').addEventListener('click',()=>play(true));$('regenerateBacking').addEventListener('click',()=>{state.seed++;state.lastEvents=buildBackingEvents();flashSummary();});$('exportBackingMidi').addEventListener('click',()=>exportMidi(true));
+ $('playProgression').addEventListener('click',()=>togglePlay(false));$('globalPlay').addEventListener('click',()=>togglePlay(document.querySelector('[data-tab="backing"]').classList.contains('active')));
+ $('exportChordsMidi').addEventListener('click',()=>exportMidi(false));
+ $('playBacking').addEventListener('click',()=>togglePlay(true));$('regenerateBacking').addEventListener('click',()=>{state.seed++;state.lastEvents=buildBackingEvents();flashSummary();});$('exportBackingMidi').addEventListener('click',()=>exportMidi(true));
  els.gridSelect.addEventListener('change',()=>{state.grid=+els.gridSelect.value;if(state.grid===24&&state.swing<40)setParam('swing',50);updateSummary();});
  els.styleFilter.addEventListener('change',renderPatternCards);
  setupDragValues();setupKnobs();setupDualRange();
@@ -94,9 +142,11 @@ function unique(field){return [...new Set(TEMPLATES.flatMap(t=>t[field]))].sort(
 function renderFilters(){makeFilterButtons(els.genreFilters,['ALL',...unique('genres')],'genre');makeFilterButtons(els.moodFilters,['ALL',...unique('moods')],'mood');}
 function makeFilterButtons(root,items,key){root.innerHTML='';items.forEach(v=>{const b=document.createElement('button');b.type='button';b.className='chip'+(state[key]===v?' active':'');b.textContent=v;b.addEventListener('click',()=>{state[key]=v;makeFilterButtons(root,items,key);renderLibrary();});root.append(b);});}
 function renderLibrary(){const k=state.keyword;const list=TEMPLATES.filter(t=>(state.genre==='ALL'||t.genres.includes(state.genre))&&(state.mood==='ALL'||t.moods.includes(state.mood))&&(!k||[t.name,t.degrees.join(''),...t.genres,...t.moods].join(' ').toLowerCase().includes(k)));els.resultCount.textContent=list.length;els.progressionList.innerHTML='';if(!list.length){els.progressionList.innerHTML='<div class="empty">該当なし</div>';return;}list.forEach(t=>{const b=document.createElement('button');b.type='button';b.className='progression-item'+(state.current.id===t.id?' active':'');b.innerHTML=`<div class="item-top"><span class="item-name">${t.name}</span><span class="item-degrees">${t.degrees.join('')}</span></div><div class="item-tags">${t.genres.concat(t.moods).slice(0,5).join(' · ')}</div><div class="stars">${stars(t.spread)}</div>`;b.addEventListener('click',()=>selectTemplate(t));els.progressionList.append(b);});}
-function selectTemplate(t){state.current=t;state.degrees=[...t.degrees];state.substituteIndex=0;renderLibrary();renderCurrent();}
-function renderCurrent(){els.currentName.textContent=state.current.name;els.spreadStars.textContent=`蔓延率 ${stars(state.current.spread)}`;renderChordStrip(els.currentChords,state.degrees);renderChordStrip(els.backingChords,state.degrees);renderSimilar();renderSubstitutes();updateSummary();}
-function renderChordStrip(root,degrees){root.innerHTML='';degrees.forEach((d,i)=>{const c=degreeChord(d),div=document.createElement('div');div.className='chord-cell';div.innerHTML=`${c.name}<small>${ROMANS[d-1]||d} / ${i+1}</small>`;root.append(div);});}
+function selectTemplate(t){state.current=t;state.degrees=[...t.degrees];state.chordOffsets=state.degrees.map(()=>0);state.substituteIndex=0;renderLibrary();renderCurrent();}
+function renderCurrent(){els.currentName.textContent=state.current.name;els.spreadStars.textContent=`蔓延率 ${stars(state.current.spread)}`;renderChordStrip(els.currentChords,state.degrees);renderChordStrip(els.backingChords,state.degrees);els.cycleInfo.textContent=`最小周期：${state.current.cycleLabel||state.degrees.length+'小節'} / ${state.degrees.length}コード`;renderChordTiming();renderSimilar();renderSubstitutes();updateSummary();}
+function renderChordStrip(root,degrees){root.innerHTML='';degrees.forEach((d,i)=>{const c=degreeChord(d),div=document.createElement('div');div.className='chord-cell';div.innerHTML=`${c.name}<small>${ROMANS[d-1]||d} / ${i+1}</small><span class="offset">頭 ${formatOffset(state.chordOffsets[i]||0)}</span>`;root.append(div);});}
+function formatOffset(step){if(step===0)return '拍頭';const beat=step/4;return beat%1===0?`${beat+1}拍目`:`+${step}/16`;}
+function renderChordTiming(){if(!els.chordTimingGrid)return;els.chordTimingGrid.innerHTML='';state.degrees.forEach((d,i)=>{const row=document.createElement('div');row.className='timing-row';const lab=document.createElement('div');lab.className='timing-label';lab.textContent=`${degreeChord(d).name} 頭`;const steps=document.createElement('div');steps.className='timing-steps';for(let st=0;st<16;st++){const b=document.createElement('button');b.type='button';b.className='timing-step'+((state.chordOffsets[i]||0)===st?' active':'');b.title=`${st+1}/16`;b.addEventListener('click',()=>{state.chordOffsets[i]=st;renderCurrent();});steps.append(b);}row.append(lab,steps);els.chordTimingGrid.append(row);});}
 function degreeChord(d){const idx=(d-1)%7,root=(state.key+MAJOR_SCALE[idx])%12,q=DEGREE_TRIADS[idx];return {degree:d,root,quality:q.quality,intervals:q.intervals,name:NOTE_NAMES[root]+(q.quality==='min'?'m':q.quality==='dim'?'dim':'')};}
 function renderSimilar(){const scored=TEMPLATES.filter(t=>t.id!==state.current.id).map(t=>({t,score:similarity(state.current,t)})).sort((a,b)=>b.score-a.score).slice(0,5);els.similarList.innerHTML='';scored.forEach(({t,score})=>{const b=document.createElement('button');b.type='button';b.className='compact-item';b.innerHTML=`<span>${t.name}<small class="item-tags"><br>${t.degrees.join('')}</small></span><strong>${Math.round(score)}%</strong>`;b.addEventListener('click',()=>selectTemplate(t));els.similarList.append(b);});}
 function similarity(a,b){let same=0,n=Math.max(a.degrees.length,b.degrees.length);for(let i=0;i<n;i++)if(a.degrees[i]===b.degrees[i])same++;const tags=a.genres.concat(a.moods).filter(x=>b.genres.concat(b.moods).includes(x)).length;return same/n*65+Math.min(tags*9,27)+Math.max(0,8-Math.abs(a.spread-b.spread)*2);}
@@ -106,58 +156,57 @@ function switchTab(tab){document.querySelectorAll('.mode-tab').forEach(b=>b.clas
 
 function renderPatternCards(){const filter=els.styleFilter?.value||'ALL';els.patternCards.innerHTML='';PATTERNS.filter(p=>filter==='ALL'||p.tags.includes(filter)).forEach(p=>{const b=document.createElement('button');b.type='button';b.className='pattern-card'+(state.pattern===p.id?' active':'');b.innerHTML=`<strong>${p.name}</strong><small>${p.desc}<br>${p.tags.join(' · ')}</small>`;b.addEventListener('click',()=>{state.pattern=p.id;renderPatternCards();updateSummary();});els.patternCards.append(b);});}
 function renderAccents(){els.accentButtons.innerHTML='';for(let i=0;i<16;i++){const b=document.createElement('button');b.type='button';b.className='accent-step';b.dataset.level=state.accents[i];b.innerHTML=`${i+1}<small>${['—','W','M','S'][state.accents[i]]}</small>`;b.addEventListener('click',()=>{state.accents[i]=(state.accents[i]+1)%4;renderAccents();});els.accentButtons.append(b);}}
-function updateAllControls(){['bpm','clickVolume','randomNotes','freedom','complexity','density','variation','rangeMotion','octave','swing','humanize','accentWidth'].forEach(p=>setParam(p,state[p],false));renderRange();updateSummary();}
-function updateSummary(){const p=PATTERNS.find(x=>x.id===state.pattern);els.backingSummary.textContent=`${p?.name||'Theory'} / ${meterLabel()} / ${state.bpm} BPM`;els.engineSummary.textContent=`Complexity ${state.complexity} · Freedom ${state.freedom} · Random ${state.randomNotes} · Range ${noteLabel(state.rangeLow)}–${noteLabel(state.rangeHigh)}`;$('bpmValue').textContent=state.bpm;$('clickVolumeValue').textContent=state.clickVolume;}
+function updateAllControls(){['bpm','clickVolume','randomNotes','freedom','complexity','density','variation','rangeMotion','octave','swing','humanize','melodic','chordChance','accentWidth'].forEach(p=>setParam(p,state[p],false));renderRange();updateSummary();}
+function updateSummary(){const p=PATTERNS.find(x=>x.id===state.pattern);els.backingSummary.textContent=`${p?.name||'Theory'} / ${meterLabel()} / ${state.bpm} BPM`;els.engineSummary.textContent=`旋律性 ${state.melodic} · 和音率 ${state.chordChance} · Complexity ${state.complexity} · Freedom ${state.freedom} · Random ${state.randomNotes} · Range ${noteLabel(state.rangeLow)}–${noteLabel(state.rangeHigh)}`;$('bpmValue').textContent=state.bpm;$('clickVolumeValue').textContent=state.clickVolume;}
 function meterLabel(){return state.meter===6?'6/8':`${state.meter}/4`;}
 function flashSummary(){els.engineSummary.animate([{opacity:.2},{opacity:1}],{duration:350});}
 
 function audioContext(){if(!state.audio)state.audio=new (window.AudioContext||window.webkitAudioContext)();return state.audio;}
-function stopAudio(){state.timers.forEach(t=>clearTimeout(t));state.timers=[];if(state.audio){try{state.audio.close();}catch{}state.audio=null;}}
-function secondsPerBeat(){return 60/state.bpm;}
-function play(backing){stopAudio();const ctx=audioContext();const countBeats=state.countIn?(state.meter===6?6:state.meter):0;const delay=countBeats*secondsPerBeat();if(state.click||state.countIn)scheduleClick(ctx,countBeats,delay,backing);const events=backing?buildBackingEvents():buildChordEvents();if(backing)state.lastEvents=events;events.forEach(e=>scheduleNotes(ctx,e.time+delay,e.duration,e.notes,e.velocity));}
+function stopAudio(){state.timers.forEach(t=>clearTimeout(t));state.timers=[];if(state.audio){try{state.audio.close();}catch{}state.audio=null;}state.isPlaying=false;updatePlayButtons();}
+function updatePlayButtons(){const txt=state.isPlaying?'■ 停止':'▶ 再生';const global=state.isPlaying?'■ STOP':'▶ PLAY';if($('playBacking'))$('playBacking').textContent=txt;if($('globalPlay'))$('globalPlay').innerHTML=`<span>${state.isPlaying?'■':'▶'}</span> ${state.isPlaying?'STOP':'PLAY'}`;}
+function togglePlay(backing){if(state.isPlaying){stopAudio();return;}play(backing);}
+function play(backing){stopAudio();state.isPlaying=true;updatePlayButtons();const ctx=audioContext();const countBeats=state.countIn?(state.meter===6?6:state.meter):0;const delay=countBeats*secondsPerBeat();if(state.click||state.countIn)scheduleClick(ctx,countBeats,delay,backing);const events=backing?buildBackingEvents():buildChordEvents();if(backing)state.lastEvents=events;events.forEach(e=>scheduleNotes(ctx,e.time+delay,e.duration,e.notes,e.velocity));const end=Math.max(0,...events.map(e=>e.time+e.duration))+delay+.2;state.timers.push(setTimeout(stopAudio,end*1000));}
 function scheduleClick(ctx,countBeats,delay,includeMain){const beatsPerBar=state.meter===6?6:state.meter,total=countBeats+(includeMain?state.degrees.length*beatsPerBar:state.degrees.length*beatsPerBar);for(let i=0;i<total;i++){if(i>=countBeats&&!state.click)continue;const t=i*secondsPerBeat();const strong=i%beatsPerBar===0;scheduleTone(ctx,t,.045,strong?1400:900,Math.max(.015,state.clickVolume/100*.09),true);}}
 function scheduleNotes(ctx,time,duration,notes,velocity=90){notes.forEach((n,i)=>{const freq=440*Math.pow(2,(n-69)/12);scheduleTone(ctx,time,duration,freq,Math.max(.025,velocity/127*.12)/(1+i*.07),false);});}
 function scheduleTone(ctx,time,duration,freq,gainValue,click){const o=ctx.createOscillator(),g=ctx.createGain(),f=ctx.createBiquadFilter();o.type=click?'square':'triangle';o.frequency.value=freq;f.type='lowpass';f.frequency.value=click?2400:1800;g.gain.setValueAtTime(.0001,ctx.currentTime+time);g.gain.exponentialRampToValueAtTime(gainValue,ctx.currentTime+time+.008);g.gain.exponentialRampToValueAtTime(.0001,ctx.currentTime+time+Math.max(.04,duration));o.connect(f).connect(g).connect(ctx.destination);o.start(ctx.currentTime+time);o.stop(ctx.currentTime+time+duration+.05);}
 
-function buildChordEvents(){const beats=state.meter===6?6:state.meter,spb=secondsPerBeat(),events=[];state.degrees.forEach((d,bar)=>{const c=degreeChord(d),root=fitRange(48+c.root),notes=c.intervals.map(x=>fitRange(root+x));events.push({time:bar*beats*spb,duration:beats*spb*.92,notes:[...new Set(notes)],velocity:88});});return events;}
+function chordStartBeat(index,beats){return index*beats+(state.chordOffsets[index]||0)/4;}
+function chordDurationBeats(index,beats){const start=chordStartBeat(index,beats);const next=index<state.degrees.length-1?chordStartBeat(index+1,beats):state.degrees.length*beats;return Math.max(.25,next-start);}
+function buildChordEvents(){const beats=state.meter===6?6:state.meter,spb=secondsPerBeat(),events=[];state.degrees.forEach((d,i)=>{const c=degreeChord(d),root=fitRange(48+c.root),notes=c.intervals.map(x=>fitRange(root+x));const st=chordStartBeat(i,beats),dur=chordDurationBeats(i,beats);events.push({time:st*spb,duration:dur*spb*.96,notes:[...new Set(notes)],velocity:88});});return events;}
 function buildBackingEvents(){
  const beats=state.meter===6?6:state.meter,spb=secondsPerBeat(),events=[],rand=mulberry32(state.seed++ + Date.now()%100000);
- state.degrees.forEach((d,bar)=>{const chord=degreeChord(d),barEvents=basePattern(chord,beats,rand);const manipulated=manipulateEvents(barEvents,chord,beats,rand,bar);manipulated.forEach(e=>{let beat=e.beat;const step=Math.round((beat%1)*4)%4;if(state.grid===24||state.swing>0){if(step===1||step===3)beat+=state.swing/100*0.165;}const human=(rand()-.5)*(state.humanize/100)*.055;const accentIndex=Math.floor((beat/beats)*16)%16;const vel=accentVelocity(state.accents[accentIndex],rand);events.push({time:(bar*beats+beat)*spb+human,duration:e.len*spb,notes:e.notes.map(n=>fitRange(n)),velocity:vel});});});
+ state.degrees.forEach((d,bar)=>{const chord=degreeChord(d),start=chordStartBeat(bar,beats),dur=chordDurationBeats(bar,beats);const local=generateBar(chord,dur,rand,bar);local.forEach(e=>{let beat=e.beat;if(state.grid===24||state.swing>0){const frac=beat%1;if(frac>.2&&frac<.8)beat+=state.swing/100*.16;}const human=(rand()-.5)*(state.humanize/100)*.045;const globalBeat=start+beat;const accentIndex=Math.floor((globalBeat%beats)/beats*16)%16;events.push({time:globalBeat*spb+human,duration:Math.max(.08,e.len)*spb,notes:[...new Set(e.notes.map(fitRange))],velocity:accentVelocity(state.accents[accentIndex],rand)});});});
  return events.sort((a,b)=>a.time-b.time);
 }
-function basePattern(chord,beats,rand){const root=48+chord.root,triad=chord.intervals.map(i=>root+i),ev=[];const p=state.pattern;
- if(p==='block'){for(let b=0;b<beats;b++)ev.push({beat:b,len:.78,notes:triad});}
- else if(p==='pulse8'){for(let i=0;i<beats*2;i++)ev.push({beat:i*.5,len:.38,notes:i%2?[triad[1],triad[2]]:[triad[0],triad[2]]});}
- else if(p==='bassChord'){for(let b=0;b<beats;b++){ev.push({beat:b,len:.65,notes:[root-12]});ev.push({beat:b+.5,len:.38,notes:[triad[1],triad[2],triad[0]+12]});}}
- else if(p==='sync'){[0,.75,1.5,2.25,3.25,4.5,5.25].filter(x=>x<beats).forEach((x,i)=>ev.push({beat:x,len:.42,notes:i%2?[triad[1],triad[2]]:[triad[0],triad[2]]}));}
- else if(p==='rock'){for(let i=0;i<beats*2;i++)ev.push({beat:i*.5,len:.35,notes:i%2?[root,root+12]:[root-12,root]});}
- else if(p==='waltz'){for(let b=0;b<beats;b++)ev.push({beat:b,len:.68,notes:b%3===0?[root-12]:[triad[1],triad[2],triad[0]+12]});}
- else if(p==='sixEight'){for(let i=0;i<beats;i++)ev.push({beat:i,len:.72,notes:[triad[[0,1,2,1,2,1][i%6]]+(i>=3?12:0)]});}
- else if(p==='swing'){for(let b=0;b<beats;b++){ev.push({beat:b,len:.52,notes:[root-12]});ev.push({beat:b+2/3,len:.25,notes:[triad[(b+1)%3]]});}}
- else if(p==='broken'){for(let i=0;i<beats*4;i++)ev.push({beat:i*.25,len:.2,notes:[triad[[0,2,1,2][i%4]]+(i%8>4?12:0)]});}
- else if(p==='anthem'){for(let b=0;b<beats;b++)ev.push({beat:b,len:.82,notes:[root-12,root,triad[1]+12,triad[2]+12]});}
- else {const seq=p==='arpUp'?[0,1,2,1]:[0,1,2,1,2,1,0,1];for(let i=0;i<beats*2;i++)ev.push({beat:i*.5,len:.4,notes:[triad[seq[i%seq.length]]+(p==='arpWave'&&i%8>=4?12:0)]});}
- return ev;
-}
-function manipulateEvents(events,chord,beats,rand,bar){
- let out=events.map(e=>({beat:e.beat,len:e.len,notes:[...e.notes]}));
- const complexity=state.complexity/100,freedom=state.freedom/100,variation=state.variation/100,density=state.density/100;
- // Density can thin or duplicate the underlying theory.
- out=out.filter(()=>rand()<.42+density*.68);
- const targetExtra=Math.round(state.randomNotes*(.35+freedom*.65));
- for(let i=0;i<targetExtra;i++){
-   const slot=Math.floor(rand()*beats*4)/4;const root=48+chord.root;const scale=[0,2,4,5,7,9,11];let interval;
-   if(rand()>freedom*.65)interval=chord.intervals[Math.floor(rand()*chord.intervals.length)];else interval=scale[Math.floor(rand()*scale.length)]+(rand()<complexity*.25?12:0);
-   out.push({beat:slot,len:.18+rand()*.5,notes:[root+interval]});
+function generateBar(chord,beats,rand,bar){
+ const root=48+chord.root, tones=chord.intervals.map(i=>root+i), out=[];
+ // 必ず小節頭にコードの根を示す白玉ベース。コード開始位置がシンコペでもそこから鳴る。
+ out.push({beat:0,len:Math.max(.75,beats*.96),notes:[root-12],foundation:true});
+ const density=state.density/100, melodic=state.melodic/100, chordChance=state.chordChance/100, complexity=state.complexity/100, freedom=state.freedom/100;
+ const baseCount=Math.max(1,Math.round(beats*(1+density*2.2)+state.randomNotes*(.3+.7*freedom)));
+ let lastTone=tones[0];
+ for(let i=0;i<baseCount;i++){
+   if(rand()>.45+density*.55)continue;
+   const grid=state.grid===24?6:4;let beat=Math.floor(rand()*beats*grid)/grid;
+   if(i===0)beat=0;
+   const chordOnly=rand()>freedom*.28;
+   let pitch;
+   if(chordOnly){
+     if(melodic>.15){const sorted=[...tones,tones[0]+12,tones[1]+12,tones[2]+12];sorted.sort((a,b)=>Math.abs(a-lastTone)-Math.abs(b-lastTone));const pool=sorted.slice(0,Math.max(2,Math.round(2+melodic*3)));pitch=pool[Math.floor(rand()*pool.length)];}
+     else pitch=tones[Math.floor(rand()*tones.length)];
+   } else {const scale=MAJOR_SCALE.map(x=>48+state.key+x);pitch=scale[Math.floor(rand()*scale.length)]+(rand()<.35?12:0);}
+   lastTone=pitch;
+   let notes=[pitch];
+   if(rand()<chordChance){const maxVoices=2+Math.round(complexity*2);const count=2+Math.floor(rand()*Math.max(1,maxVoices-1));notes=[];const shuffled=[...tones,tones[0]+12,tones[1]+12,tones[2]+12].sort(()=>rand()-.5);for(let n=0;n<count;n++)notes.push(shuffled[n]);}
+   if(rand()<state.octave/100*.35)notes.push(notes[0]+(rand()<.5?12:-12));
+   const gate=.72+(.22*(1-freedom));const unit=state.grid===24?1/3:.25;let len=Math.max(unit,unit*(1+Math.floor(rand()*(2+complexity*4))))*gate;
+   if(state.pattern==='block')len=Math.max(.8,1.8*gate);
+   if(state.pattern==='pulse8')beat=Math.round(beat*2)/2;
+   if(state.pattern==='arpUp'||state.pattern==='arpWave'||state.pattern==='broken')notes=[notes[0]];
+   const motion=Math.round((rand()-.5)*(state.rangeMotion/100)*20);notes=notes.map(n=>n+motion);
+   out.push({beat:clamp(beat,0,beats-.05),len:clamp(len,.18,Math.max(.25,beats-beat)),notes});
  }
- out.forEach((e,i)=>{
-   if(rand()<complexity*.55&&e.notes.length<4){const base=e.notes[0];e.notes.push(base+(rand()<.55?12:7));}
-   if(rand()<state.octave/100*.45)e.notes=e.notes.map((n,j)=>n+(j===0&&rand()<.5?-12:12));
-   if(rand()<freedom*.32){e.beat=clamp(e.beat+(rand()-.5)*(.25+freedom*.55),0,beats-.05);e.len=clamp(e.len*(.65+rand()*.9),.08,1.5);}
-   if(rand()<variation*.3&&bar%2===1)e.notes.reverse();
-   const motion=Math.round((rand()-.5)*(state.rangeMotion/100)*24);e.notes=e.notes.map(n=>n+motion);
- });
- return out.filter(e=>e.beat<beats).sort((a,b)=>a.beat-b.beat);
+ return out.sort((a,b)=>a.beat-b.beat);
 }
 function accentVelocity(level,rand){const width=state.accentWidth/100;const center=84,spread=10+width*34;const offsets=[-spread*.55,-spread*.2,spread*.25,spread];return clamp(center+offsets[level]+(rand()-.5)*state.humanize*.22,1,127);}
 function fitRange(note){while(note<state.rangeLow)note+=12;while(note>state.rangeHigh)note-=12;return clamp(Math.round(note),state.rangeLow,state.rangeHigh);}
@@ -165,7 +214,7 @@ function noteLabel(n){return NOTE_NAMES[((n%12)+12)%12]+(Math.floor(n/12)-1);}
 function mulberry32(a){return function(){let t=a+=0x6D2B79F5;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return ((t^t>>>14)>>>0)/4294967296;};}
 
 function exportMidi(backing){const events=backing?(state.lastEvents||buildBackingEvents()):buildChordEvents();const data=makeMidi(events,backing?'COORDINATE_BACKING':'COORDINATE_PROGRESSION');downloadBlob(new Blob([data],{type:'audio/midi'}),`${backing?'COORDINATE_BACKING':'COORDINATE_PROGRESSION'}_${state.bpm}BPM.mid`);}
-function makeMidi(events,name){const tpq=480,tempo=Math.round(60000000/state.bpm),bytes=[],push=(...x)=>bytes.push(...x),str=s=>[...s].map(c=>c.charCodeAt(0));push(...str('MThd'),0,0,0,6,0,1,0,1,(tpq>>8)&255,tpq&255);let tr=[],tpush=(...x)=>tr.push(...x);tpush(0,0xff,0x03,name.length,...str(name));tpush(0,0xff,0x51,3,(tempo>>16)&255,(tempo>>8)&255,tempo&255);const denom=state.meter===6?8:4,nn=state.meter===6?6:state.meter;tpush(0,0xff,0x58,4,nn,Math.log2(denom),24,8);const flat=[];events.forEach(e=>{const start=Math.max(0,Math.round(e.time/secondsPerBeat()*tpq)),end=start+Math.max(30,Math.round(e.duration/secondsPerBeat()*tpq));e.notes.forEach(n=>{flat.push({tick:start,on:true,n,vel:Math.round(e.velocity)});flat.push({tick:end,on:false,n,vel:0});});});flat.sort((a,b)=>a.tick-b.tick||Number(a.on)-Number(b.on));let last=0;flat.forEach(e=>{tpush(...vlq(e.tick-last),e.on?0x90:0x80,e.n,e.vel);last=e.tick;});tpush(0,0xff,0x2f,0);push(...str('MTrk'),(tr.length>>>24)&255,(tr.length>>>16)&255,(tr.length>>>8)&255,tr.length&255,...tr);return new Uint8Array(bytes);}
+function makeMidi(events,name){const tpq=480,tempo=Math.round(60000000/state.bpm),bytes=[],push=(...x)=>bytes.push(...x),str=s=>[...s].map(c=>c.charCodeAt(0));push(...str('MThd'),0,0,0,6,0,1,0,1,(tpq>>8)&255,tpq&255);let tr=[],tpush=(...x)=>tr.push(...x);tpush(0,0xff,0x03,name.length,...str(name));tpush(0,0xff,0x51,3,(tempo>>16)&255,(tempo>>8)&255,tempo&255);const denom=state.meter===6?8:4,nn=state.meter===6?6:state.meter;tpush(0,0xff,0x58,4,nn,Math.log2(denom),24,8);const flat=[];events.forEach(e=>{const start=Math.max(0,Math.round(e.time/secondsPerBeat()*tpq)),end=start+Math.max(90,Math.round(e.duration/secondsPerBeat()*tpq));e.notes.forEach(n=>{flat.push({tick:start,on:true,n,vel:Math.round(e.velocity)});flat.push({tick:end,on:false,n,vel:0});});});flat.sort((a,b)=>a.tick-b.tick||Number(a.on)-Number(b.on));let last=0;flat.forEach(e=>{tpush(...vlq(e.tick-last),e.on?0x90:0x80,e.n,e.vel);last=e.tick;});tpush(0,0xff,0x2f,0);push(...str('MTrk'),(tr.length>>>24)&255,(tr.length>>>16)&255,(tr.length>>>8)&255,tr.length&255,...tr);return new Uint8Array(bytes);}
 function vlq(v){let b=[v&127];while(v>>=7)b.unshift((v&127)|128);return b;}
 function downloadBlob(blob,name){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.append(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},1000);}
 function clamp(v,min,max){return Math.max(min,Math.min(max,v));}

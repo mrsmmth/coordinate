@@ -10,7 +10,7 @@
   <title>COORDINATE</title>
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="apple-touch-icon" href="./icon-192.png">
-  <link rel="stylesheet" href="./style.css?v=020">
+  <link rel="stylesheet" href="./style.css?v=030">
 </head>
 <body data-theme="ocean">
 <main class="app-shell">
@@ -35,7 +35,6 @@
   <section class="transport frame-panel">
     <div class="transport-main">
       <button id="globalPlay" class="play-button" type="button"><span>▶</span> PLAY</button>
-      <button id="globalStop" class="stop-button" type="button">■</button>
       <div id="bpmControl" class="value-drag" data-param="bpm" role="slider" aria-label="BPM" aria-valuemin="40" aria-valuemax="240" aria-valuenow="120" tabindex="0">
         <small>BPM</small><strong id="bpmValue">120</strong><span>DRAG / DOUBLE TAP</span>
       </div>
@@ -67,7 +66,7 @@
       <div class="main-stack">
         <section class="frame-panel current-panel">
           <div class="panel-head"><div><span>CURRENT</span><h2 id="currentName">王道 4536</h2></div><div id="spreadStars" class="spread-stars"></div></div>
-          <div id="currentChords" class="chord-strip"></div>
+          <div id="currentChords" class="chord-strip"></div><div id="cycleInfo" class="cycle-info"></div>
           <div class="inline-actions"><button id="playProgression" class="primary-action" type="button">▶ PREVIEW</button><button id="exportChordsMidi" type="button">EXPORT MIDI</button></div>
         </section>
         <div class="split-panels">
@@ -82,7 +81,7 @@
     <div class="backing-layout">
       <section class="frame-panel source-strip">
         <div class="panel-head compact"><div><span>LINKED PROGRESSION</span><h2>Backing Source</h2></div></div>
-        <div id="backingChords" class="chord-strip mini"></div>
+        <div id="backingChords" class="chord-strip mini"></div><div id="chordTimingGrid" class="chord-timing-grid"></div>
       </section>
 
       <section class="frame-panel theory-panel">
@@ -99,12 +98,12 @@
           <div class="knob-unit hero" data-param="complexity" data-min="0" data-max="100" data-value="45"><div class="knob"><i></i><b id="complexityValue">45</b></div><strong>COMPLEXITY</strong><small>構造そのものの複雑さ</small></div>
         </div>
         <div class="knob-grid">
-          <div class="knob-unit" data-param="density" data-min="0" data-max="100" data-value="55"><div class="knob"><i></i><b id="densityValue">55</b></div><strong>DENSITY</strong></div>
-          <div class="knob-unit" data-param="variation" data-min="0" data-max="100" data-value="35"><div class="knob"><i></i><b id="variationValue">35</b></div><strong>VARIATION</strong></div>
-          <div class="knob-unit" data-param="rangeMotion" data-min="0" data-max="100" data-value="30"><div class="knob"><i></i><b id="rangeMotionValue">30</b></div><strong>RANGE MOTION</strong></div>
-          <div class="knob-unit" data-param="octave" data-min="0" data-max="100" data-value="30"><div class="knob"><i></i><b id="octaveValue">30</b></div><strong>OCTAVE</strong></div>
-          <div class="knob-unit" data-param="swing" data-min="0" data-max="75" data-value="0"><div class="knob"><i></i><b id="swingValue">0</b></div><strong>SWING</strong></div>
-          <div class="knob-unit" data-param="humanize" data-min="0" data-max="100" data-value="15"><div class="knob"><i></i><b id="humanizeValue">15</b></div><strong>HUMANIZE</strong></div>
+          <div class="knob-unit" data-param="density" data-min="0" data-max="100" data-value="55"><div class="knob"><i></i><b id="densityValue">55</b></div><strong>DENSITY</strong><small>音が現れる密度</small></div>
+          <div class="knob-unit" data-param="variation" data-min="0" data-max="100" data-value="35"><div class="knob"><i></i><b id="variationValue">35</b></div><strong>VARIATION</strong><small>周回ごとの変化量</small></div>
+          <div class="knob-unit" data-param="rangeMotion" data-min="0" data-max="100" data-value="30"><div class="knob"><i></i><b id="rangeMotionValue">30</b></div><strong>RANGE MOTION</strong><small>有効音域内を上下する幅</small></div>
+          <div class="knob-unit" data-param="octave" data-min="0" data-max="100" data-value="30"><div class="knob"><i></i><b id="octaveValue">30</b></div><strong>OCTAVE</strong><small>オクターブ配置の量</small></div>
+          <div class="knob-unit" data-param="swing" data-min="0" data-max="75" data-value="0"><div class="knob"><i></i><b id="swingValue">0</b></div><strong>SWING</strong><small>裏拍を後ろへずらす量</small></div>
+          <div class="knob-unit" data-param="humanize" data-min="0" data-max="100" data-value="15"><div class="knob"><i></i><b id="humanizeValue">15</b></div><strong>HUMANIZE</strong><small>発音と強さの揺れ</small></div><div class="knob-unit" data-param="melodic" data-min="0" data-max="100" data-value="65"><div class="knob"><i></i><b id="melodicValue">65</b></div><strong>MELODIC</strong><small>単音が線として動く確率</small></div><div class="knob-unit" data-param="chordChance" data-min="0" data-max="100" data-value="45"><div class="knob"><i></i><b id="chordChanceValue">45</b></div><strong>CHORD CHANCE</strong><small>複数音を同時に鳴らす確率</small></div>
         </div>
       </section>
 
@@ -131,14 +130,14 @@
 
       <section class="frame-panel export-panel">
         <div><span>LIVE RESULT</span><h2 id="backingSummary">Theory / 4/4 / 120 BPM</h2><p id="engineSummary">Complexity 45 · Freedom 35 · Random 4</p></div>
-        <div class="inline-actions"><button id="playBacking" class="primary-action" type="button">▶ GENERATE & PLAY</button><button id="regenerateBacking" type="button">↻ REGENERATE</button><button id="exportBackingMidi" type="button">EXPORT MIDI</button></div>
+        <div class="inline-actions transport-actions"><button id="playBacking" class="primary-action large-play" type="button">▶ 再生</button><button id="regenerateBacking" type="button">↻ 練り直し</button><button id="exportBackingMidi" type="button">MIDI書き出し</button></div>
       </section>
     </div>
   </section>
 </main>
 
 <dialog id="guideDialog" class="guide-dialog"><form method="dialog" class="guide-card"><button class="dialog-close" value="close">×</button><span>COORDINATE</span><h2>音楽を選び、崩し、MIDIへ。</h2><p>数値はドラッグで滑らかに変更できます。上下左右どちらへ動かしても操作でき、ダブルタップ／ダブルクリックで直接入力できます。</p><p>BACKING ENGINEではセオリーパターンを骨格に、Complexity・Freedom・Random Notes・Range Motionなどを組み合わせて毎回異なる伴奏を生成します。</p><button class="primary-action wide" value="ok">OK</button></form></dialog>
-<script src="./app.js?v=020"></script>
+<script src="./app.js?v=030"></script>
 <script>if('serviceWorker' in navigator){addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js'));}</script>
 </body>
 </html>
