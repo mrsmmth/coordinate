@@ -77,7 +77,7 @@ const PATTERNS=[
 const state={
  theme:'ocean',key:0,bpm:120,meter:4,genre:'ALL',mood:'ALL',keyword:'',current:TEMPLATES[0],degrees:[4,5,3,6],substituteIndex:0,
  pattern:'block',grid:16,click:false,countIn:false,clickVolume:65,randomNotes:4,freedom:35,complexity:45,density:55,variation:35,rangeMotion:30,octave:30,swing:0,humanize:15,accentWidth:55,
- rangeLow:36,rangeHigh:84,melodic:65,chordChance:45,chordOffsets:[],accents:[3,0,1,0,2,0,1,0,3,0,1,0,2,0,1,0],audio:null,timers:[],lastEvents:null,seed:1,isPlaying:false,stopAt:0
+ rangeLow:36,rangeHigh:84,melodic:65,chordChance:45,chordOffsets:[],accents:[3,0,1,0,2,0,1,0,3,0,1,0,2,0,1,0],audio:null,master:null,sources:[],timers:[],lastEvents:null,seed:1,isPlaying:false,stopAt:0
 };
 const $=id=>document.getElementById(id);
 const els={};
@@ -145,8 +145,28 @@ function renderLibrary(){const k=state.keyword;const list=TEMPLATES.filter(t=>(s
 function selectTemplate(t){state.current=t;state.degrees=[...t.degrees];state.chordOffsets=state.degrees.map(()=>0);state.substituteIndex=0;renderLibrary();renderCurrent();}
 function renderCurrent(){els.currentName.textContent=state.current.name;els.spreadStars.textContent=`蔓延率 ${stars(state.current.spread)}`;renderChordStrip(els.currentChords,state.degrees);renderChordStrip(els.backingChords,state.degrees);els.cycleInfo.textContent=`最小周期：${state.current.cycleLabel||state.degrees.length+'小節'} / ${state.degrees.length}コード`;renderChordTiming();renderSimilar();renderSubstitutes();updateSummary();}
 function renderChordStrip(root,degrees){root.innerHTML='';degrees.forEach((d,i)=>{const c=degreeChord(d),div=document.createElement('div');div.className='chord-cell';div.innerHTML=`${c.name}<small>${ROMANS[d-1]||d} / ${i+1}</small><span class="offset">頭 ${formatOffset(state.chordOffsets[i]||0)}</span>`;root.append(div);});}
-function formatOffset(step){if(step===0)return '拍頭';const beat=step/4;return beat%1===0?`${beat+1}拍目`:`+${step}/16`;}
-function renderChordTiming(){if(!els.chordTimingGrid)return;els.chordTimingGrid.innerHTML='';state.degrees.forEach((d,i)=>{const row=document.createElement('div');row.className='timing-row';const lab=document.createElement('div');lab.className='timing-label';lab.textContent=`${degreeChord(d).name} 頭`;const steps=document.createElement('div');steps.className='timing-steps';for(let st=0;st<16;st++){const b=document.createElement('button');b.type='button';b.className='timing-step'+((state.chordOffsets[i]||0)===st?' active':'');b.title=`${st+1}/16`;b.addEventListener('click',()=>{state.chordOffsets[i]=st;renderCurrent();});steps.append(b);}row.append(lab,steps);els.chordTimingGrid.append(row);});}
+function formatOffset(step){if(step===0)return '拍頭';const beat=Math.floor(step/4)+1,sub=step%4;return sub===0?`${beat}拍目`:`${beat}拍目 + ${sub}/16`;}
+function renderChordTiming(){
+ if(!els.chordTimingGrid)return;
+ els.chordTimingGrid.innerHTML='';
+ state.degrees.forEach((d,i)=>{
+   const row=document.createElement('div');row.className='timing-row';
+   const lab=document.createElement('div');lab.className='timing-label';lab.innerHTML=`<strong>${degreeChord(d).name}</strong><small>${formatOffset(state.chordOffsets[i]||0)}</small>`;
+   const track=document.createElement('div');track.className='timing-slider';track.setAttribute('role','slider');track.tabIndex=0;track.setAttribute('aria-label',`${degreeChord(d).name} の発音位置`);track.setAttribute('aria-valuemin','0');track.setAttribute('aria-valuemax','15');
+   const ticks=document.createElement('div');ticks.className='timing-ticks';
+   for(let st=0;st<16;st++){const tick=document.createElement('i');if(st%4===0)tick.className='beat';ticks.append(tick);}
+   const handle=document.createElement('button');handle.type='button';handle.className='timing-handle';handle.innerHTML=`<span>${degreeChord(d).name}</span>`;
+   const paint=()=>{const v=state.chordOffsets[i]||0;handle.style.left=`${v/15*100}%`;track.setAttribute('aria-valuenow',String(v));lab.querySelector('small').textContent=formatOffset(v);};
+   const setFromPointer=e=>{const r=track.getBoundingClientRect();const x=clamp(e.clientX-r.left,0,r.width);state.chordOffsets[i]=clamp(Math.round(x/r.width*15),0,15);paint();renderChordStrip(els.currentChords,state.degrees);renderChordStrip(els.backingChords,state.degrees);state.lastEvents=null;updateSummary();};
+   let dragging=false;
+   handle.addEventListener('pointerdown',e=>{dragging=true;handle.setPointerCapture?.(e.pointerId);e.preventDefault();});
+   handle.addEventListener('pointermove',e=>{if(dragging)setFromPointer(e);});
+   handle.addEventListener('pointerup',e=>{if(dragging){dragging=false;setFromPointer(e);}});
+   track.addEventListener('pointerdown',e=>{if(e.target===handle||handle.contains(e.target))return;setFromPointer(e);});
+   track.addEventListener('keydown',e=>{let v=state.chordOffsets[i]||0;if(e.key==='ArrowRight'||e.key==='ArrowUp')v++;else if(e.key==='ArrowLeft'||e.key==='ArrowDown')v--;else return;e.preventDefault();state.chordOffsets[i]=clamp(v,0,15);paint();renderChordStrip(els.currentChords,state.degrees);renderChordStrip(els.backingChords,state.degrees);state.lastEvents=null;});
+   track.append(ticks,handle);row.append(lab,track);els.chordTimingGrid.append(row);paint();
+ });
+}
 function degreeChord(d){const idx=(d-1)%7,root=(state.key+MAJOR_SCALE[idx])%12,q=DEGREE_TRIADS[idx];return {degree:d,root,quality:q.quality,intervals:q.intervals,name:NOTE_NAMES[root]+(q.quality==='min'?'m':q.quality==='dim'?'dim':'')};}
 function renderSimilar(){const scored=TEMPLATES.filter(t=>t.id!==state.current.id).map(t=>({t,score:similarity(state.current,t)})).sort((a,b)=>b.score-a.score).slice(0,5);els.similarList.innerHTML='';scored.forEach(({t,score})=>{const b=document.createElement('button');b.type='button';b.className='compact-item';b.innerHTML=`<span>${t.name}<small class="item-tags"><br>${t.degrees.join('')}</small></span><strong>${Math.round(score)}%</strong>`;b.addEventListener('click',()=>selectTemplate(t));els.similarList.append(b);});}
 function similarity(a,b){let same=0,n=Math.max(a.degrees.length,b.degrees.length);for(let i=0;i<n;i++)if(a.degrees[i]===b.degrees[i])same++;const tags=a.genres.concat(a.moods).filter(x=>b.genres.concat(b.moods).includes(x)).length;return same/n*65+Math.min(tags*9,27)+Math.max(0,8-Math.abs(a.spread-b.spread)*2);}
@@ -161,14 +181,51 @@ function updateSummary(){const p=PATTERNS.find(x=>x.id===state.pattern);els.back
 function meterLabel(){return state.meter===6?'6/8':`${state.meter}/4`;}
 function flashSummary(){els.engineSummary.animate([{opacity:.2},{opacity:1}],{duration:350});}
 
-function audioContext(){if(!state.audio)state.audio=new (window.AudioContext||window.webkitAudioContext)();return state.audio;}
-function stopAudio(){state.timers.forEach(t=>clearTimeout(t));state.timers=[];if(state.audio){try{state.audio.close();}catch{}state.audio=null;}state.isPlaying=false;updatePlayButtons();}
+function audioContext(){
+ if(!state.audio){
+   const Ctx=window.AudioContext||window.webkitAudioContext;
+   if(!Ctx)throw new Error('Web Audio API is not supported');
+   state.audio=new Ctx();
+   state.master=state.audio.createGain();
+   state.master.gain.value=.92;
+   state.master.connect(state.audio.destination);
+ }
+ return state.audio;
+}
+function stopAudio(){
+ state.timers.forEach(t=>clearTimeout(t));state.timers=[];
+ state.sources.forEach(n=>{try{n.stop();}catch{}});state.sources=[];
+ state.isPlaying=false;updatePlayButtons();
+}
 function updatePlayButtons(){const txt=state.isPlaying?'■ 停止':'▶ 再生';const global=state.isPlaying?'■ STOP':'▶ PLAY';if($('playBacking'))$('playBacking').textContent=txt;if($('globalPlay'))$('globalPlay').innerHTML=`<span>${state.isPlaying?'■':'▶'}</span> ${state.isPlaying?'STOP':'PLAY'}`;}
 function togglePlay(backing){if(state.isPlaying){stopAudio();return;}play(backing);}
-function play(backing){stopAudio();state.isPlaying=true;updatePlayButtons();const ctx=audioContext();const countBeats=state.countIn?(state.meter===6?6:state.meter):0;const delay=countBeats*secondsPerBeat();if(state.click||state.countIn)scheduleClick(ctx,countBeats,delay,backing);const events=backing?buildBackingEvents():buildChordEvents();if(backing)state.lastEvents=events;events.forEach(e=>scheduleNotes(ctx,e.time+delay,e.duration,e.notes,e.velocity));const end=Math.max(0,...events.map(e=>e.time+e.duration))+delay+.2;state.timers.push(setTimeout(stopAudio,end*1000));}
+async function play(backing){
+ stopAudio();
+ let ctx;
+ try{ctx=audioContext();if(ctx.state==='suspended')await ctx.resume();}
+ catch(err){console.error(err);alert('音声エンジンを開始できませんでした。もう一度再生を押してください。');return;}
+ state.isPlaying=true;updatePlayButtons();
+ const countBeats=state.countIn?(state.meter===6?6:state.meter):0;
+ const delay=countBeats*secondsPerBeat();
+ const lead=.06;
+ if(state.click||state.countIn)scheduleClick(ctx,countBeats,delay+lead,backing);
+ const events=backing?buildBackingEvents():buildChordEvents();if(backing)state.lastEvents=events;
+ events.forEach(e=>scheduleNotes(ctx,e.time+delay+lead,e.duration,e.notes,e.velocity));
+ const end=Math.max(0,...events.map(e=>e.time+e.duration))+delay+lead+.2;
+ state.timers.push(setTimeout(stopAudio,end*1000));
+}
 function scheduleClick(ctx,countBeats,delay,includeMain){const beatsPerBar=state.meter===6?6:state.meter,total=countBeats+(includeMain?state.degrees.length*beatsPerBar:state.degrees.length*beatsPerBar);for(let i=0;i<total;i++){if(i>=countBeats&&!state.click)continue;const t=i*secondsPerBeat();const strong=i%beatsPerBar===0;scheduleTone(ctx,t,.045,strong?1400:900,Math.max(.015,state.clickVolume/100*.09),true);}}
 function scheduleNotes(ctx,time,duration,notes,velocity=90){notes.forEach((n,i)=>{const freq=440*Math.pow(2,(n-69)/12);scheduleTone(ctx,time,duration,freq,Math.max(.025,velocity/127*.12)/(1+i*.07),false);});}
-function scheduleTone(ctx,time,duration,freq,gainValue,click){const o=ctx.createOscillator(),g=ctx.createGain(),f=ctx.createBiquadFilter();o.type=click?'square':'triangle';o.frequency.value=freq;f.type='lowpass';f.frequency.value=click?2400:1800;g.gain.setValueAtTime(.0001,ctx.currentTime+time);g.gain.exponentialRampToValueAtTime(gainValue,ctx.currentTime+time+.008);g.gain.exponentialRampToValueAtTime(.0001,ctx.currentTime+time+Math.max(.04,duration));o.connect(f).connect(g).connect(ctx.destination);o.start(ctx.currentTime+time);o.stop(ctx.currentTime+time+duration+.05);}
+function scheduleTone(ctx,time,duration,freq,gainValue,click){
+ const o=ctx.createOscillator(),g=ctx.createGain(),f=ctx.createBiquadFilter();
+ const start=ctx.currentTime+Math.max(0,time),end=start+Math.max(.06,duration);
+ o.type=click?'square':'triangle';o.frequency.setValueAtTime(freq,start);
+ f.type='lowpass';f.frequency.setValueAtTime(click?2600:2100,start);f.Q.value=click?.3:.75;
+ g.gain.setValueAtTime(.0001,start);g.gain.exponentialRampToValueAtTime(Math.max(.0002,gainValue),start+.012);
+ g.gain.setValueAtTime(Math.max(.0002,gainValue*.82),Math.max(start+.013,end-.055));g.gain.exponentialRampToValueAtTime(.0001,end);
+ o.connect(f).connect(g).connect(state.master||ctx.destination);o.start(start);o.stop(end+.03);state.sources.push(o);
+ o.addEventListener('ended',()=>{const i=state.sources.indexOf(o);if(i>=0)state.sources.splice(i,1);},{once:true});
+}
 
 function chordStartBeat(index,beats){return index*beats+(state.chordOffsets[index]||0)/4;}
 function chordDurationBeats(index,beats){const start=chordStartBeat(index,beats);const next=index<state.degrees.length-1?chordStartBeat(index+1,beats):state.degrees.length*beats;return Math.max(.25,next-start);}
