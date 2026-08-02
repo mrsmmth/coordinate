@@ -10,7 +10,7 @@
   <title>COORDINATE</title>
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="apple-touch-icon" href="./icon-192.png">
-  <link rel="stylesheet" href="./style.css?v=035">
+  <link rel="stylesheet" href="./style.css?v=040">
 </head>
 <body data-theme="ocean">
 <main class="app-shell">
@@ -81,7 +81,7 @@
     <div class="backing-layout">
       <section class="frame-panel source-strip">
         <div class="panel-head compact"><div><span>LINKED PROGRESSION</span><h2>Backing Source</h2></div></div>
-        <div id="backingChords" class="chord-strip mini"></div><div class="timing-help">白いコードを左右にスライドすると、16分音符の目盛りへ吸着します。</div><div id="chordTimingGrid" class="chord-timing-grid"></div>
+        <div id="backingChords" class="chord-strip mini"></div><div class="timing-help">白いコードブロックの両端で開始・終了を調整。中央をドラッグすると長さを保ったまま移動します。</div><div id="chordTimingGrid" class="chord-timing-grid"></div>
       </section>
 
       <section class="frame-panel theory-panel">
@@ -103,7 +103,7 @@
           <div class="knob-unit" data-param="rangeMotion" data-min="0" data-max="100" data-value="30"><div class="knob"><i></i><b id="rangeMotionValue">30</b></div><strong>RANGE MOTION</strong><small>有効音域内を上下する幅</small></div>
           <div class="knob-unit" data-param="octave" data-min="0" data-max="100" data-value="30"><div class="knob"><i></i><b id="octaveValue">30</b></div><strong>OCTAVE</strong><small>オクターブ配置の量</small></div>
           <div class="knob-unit" data-param="swing" data-min="0" data-max="75" data-value="0"><div class="knob"><i></i><b id="swingValue">0</b></div><strong>SWING</strong><small>裏拍を後ろへずらす量</small></div>
-          <div class="knob-unit" data-param="humanize" data-min="0" data-max="100" data-value="15"><div class="knob"><i></i><b id="humanizeValue">15</b></div><strong>HUMANIZE</strong><small>発音と強さの揺れ</small></div><div class="knob-unit" data-param="melodic" data-min="0" data-max="100" data-value="65"><div class="knob"><i></i><b id="melodicValue">65</b></div><strong>MELODIC</strong><small>単音が線として動く確率</small></div><div class="knob-unit" data-param="chordChance" data-min="0" data-max="100" data-value="45"><div class="knob"><i></i><b id="chordChanceValue">45</b></div><strong>CHORD CHANCE</strong><small>複数音を同時に鳴らす確率</small></div>
+          <div class="knob-unit" data-param="humanize" data-min="0" data-max="100" data-value="15"><div class="knob"><i></i><b id="humanizeValue">15</b></div><strong>HUMANIZE</strong><small>発音と強さの揺れ</small></div><div class="knob-unit" data-param="melodic" data-min="0" data-max="100" data-value="65"><div class="knob"><i></i><b id="melodicValue">65</b></div><strong>MELODIC</strong><small>単音が線として動く確率</small></div><div class="knob-unit" data-param="chordChance" data-min="0" data-max="100" data-value="45"><div class="knob"><i></i><b id="chordChanceValue">45</b></div><strong>CHORD CHANCE</strong><small>複数音を同時に鳴らす確率</small></div><div class="knob-unit" data-param="chordThickness" data-min="1" data-max="4" data-value="3"><div class="knob"><i></i><b id="chordThicknessValue">3</b></div><strong>CHORD THICKNESS</strong><small>和音になった時の最大音数</small></div>
         </div>
       </section>
 
@@ -136,8 +136,8 @@
   </section>
 </main>
 
-<dialog id="guideDialog" class="guide-dialog"><form method="dialog" class="guide-card"><button class="dialog-close" value="close">×</button><span>COORDINATE</span><h2>音楽を選び、崩し、MIDIへ。</h2><p>数値はドラッグで滑らかに変更できます。上下左右どちらへ動かしても操作でき、ダブルタップ／ダブルクリックで直接入力できます。</p><p>BACKING ENGINEではセオリーパターンを骨格に、各ノブで演奏を調整します。白いコード頭は左右へスライドでき、16分音符の目盛りへ自動で吸着します。</p><button class="primary-action wide" value="ok">OK</button></form></dialog>
-<script src="./app.js?v=035"></script>
+<dialog id="guideDialog" class="guide-dialog"><form method="dialog" class="guide-card"><button class="dialog-close" value="close">×</button><span>COORDINATE</span><h2>音楽を選び、崩し、MIDIへ。</h2><p>数値はドラッグで滑らかに変更できます。上下左右どちらへ動かしても操作でき、ダブルタップ／ダブルクリックで直接入力できます。</p><p>BACKING ENGINEではセオリーパターンを骨格に、各ノブで演奏を調整します。白いコードブロックは両端で開始・終了を調整でき、中央ドラッグで長さを保ったまま移動します。すべて16分音符へ吸着します。</p><button class="primary-action wide" value="ok">OK</button></form></dialog>
+<script src="./app.js?v=040"></script>
 <script>if('serviceWorker' in navigator){addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js'));}</script>
 </body>
 </html>
