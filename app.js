@@ -187,10 +187,8 @@ function audioContext(){
    const Ctx=window.AudioContext||window.webkitAudioContext;
    if(!Ctx)throw new Error('Web Audio API is not supported');
    state.audio=new Ctx();
-   state.master=state.audio.createGain();
-   state.master.gain.value=1.0;
-   state.master.connect(state.audio.destination);
  }
+ if(state.audio.state==='suspended')state.audio.resume().catch(()=>{});
  return state.audio;
 }
 function stopAudio(){
@@ -198,17 +196,12 @@ function stopAudio(){
  state.sources.forEach(n=>{try{n.stop();}catch{}});state.sources=[];
  state.isPlaying=false;updatePlayButtons();
 }
-function updatePlayButtons(){const txt=state.isPlaying?'■ 停止':'▶ 再生';const global=state.isPlaying?'■ STOP':'▶ PLAY';if($('playBacking'))$('playBacking').textContent=txt;if($('globalPlay'))$('globalPlay').innerHTML=`<span>${state.isPlaying?'■':'▶'}</span> ${state.isPlaying?'STOP':'PLAY'}`;}
+function updatePlayButtons(){const txt=state.isPlaying?'■ 停止':'▶ 再生';if($('playBacking'))$('playBacking').textContent=txt;if($('globalPlay'))$('globalPlay').innerHTML=`<span>${state.isPlaying?'■':'▶'}</span> ${state.isPlaying?'STOP':'PLAY'}`;}
 function unlockAudioNow(){
  try{
    const ctx=audioContext();
-   if(ctx.state==='suspended')ctx.resume().catch(()=>{});
-   // iOS Safari/PWAでは、ユーザー操作と同じイベント内で音源をstartする必要がある。
-   const buffer=ctx.createBuffer(1,1,ctx.sampleRate);
-   const source=ctx.createBufferSource();
-   const gain=ctx.createGain();
-   gain.gain.value=.00001;
-   source.buffer=buffer;source.connect(gain).connect(state.master||ctx.destination);source.start(0);
+   // THREE PITCH と同じ、ユーザー操作内で即座に発音する方式。
+   playPianoTone(72,0,.08,.035,ctx);
    state.audioUnlocked=true;
    return ctx;
  }catch(err){console.error('Audio unlock failed',err);return null;}
@@ -217,41 +210,52 @@ function togglePlay(backing){
  if(state.isPlaying){stopAudio();return;}
  const ctx=unlockAudioNow();
  if(!ctx){showAudioError('音声エンジンを作れませんでした');return;}
- play(backing,ctx);
+ window.setTimeout(()=>play(backing,ctx).catch(err=>{console.error(err);showAudioError('再生処理でエラーが発生しました');stopAudio();}),30);
 }
 function showAudioError(message){
  const target=$('engineSummary');
- if(target){target.textContent='⚠ '+message+'。端末音量と消音設定を確認し、もう一度再生してください。';target.classList.add('audio-error');}
+ if(target){target.textContent='⚠ '+message+'。端末音量・消音設定・Safariの自動再生設定を確認してください。';target.classList.add('audio-error');}
 }
 async function play(backing,ctx=audioContext()){
  stopAudio();
- try{
-   if(ctx.state==='suspended')await ctx.resume();
-   if(ctx.state!=='running')throw new Error('AudioContext state: '+ctx.state);
- }
- catch(err){console.error(err);showAudioError('音声の開始がブロックされました');return;}
+ if(ctx.state==='suspended')await ctx.resume();
+ if(ctx.state!=='running')throw new Error('AudioContext state: '+ctx.state);
+ const events=backing?buildBackingEvents():buildChordEvents();
+ if(!events.length)throw new Error('No playback events');
+ if(backing)state.lastEvents=events;
  state.isPlaying=true;updatePlayButtons();
  $('engineSummary')?.classList.remove('audio-error');
  const countBeats=state.countIn?(state.meter===6?6:state.meter):0;
  const delay=countBeats*secondsPerBeat();
- const lead=.06;
- if(state.click||state.countIn)scheduleClick(ctx,countBeats,delay+lead,backing);
- const events=backing?buildBackingEvents():buildChordEvents();if(backing)state.lastEvents=events;
+ const lead=.08;
+ if(state.click||state.countIn)scheduleClick(ctx,countBeats,delay+lead);
  events.forEach(e=>scheduleNotes(ctx,e.time+delay+lead,e.duration,e.notes,e.velocity));
- const end=Math.max(0,...events.map(e=>e.time+e.duration))+delay+lead+.2;
+ const end=Math.max(...events.map(e=>e.time+e.duration))+delay+lead+.25;
  state.timers.push(setTimeout(stopAudio,end*1000));
 }
-function scheduleClick(ctx,countBeats,delay,includeMain){const beatsPerBar=state.meter===6?6:state.meter,total=countBeats+state.degrees.length*beatsPerBar;for(let i=0;i<total;i++){if(i>=countBeats&&!state.click)continue;const t=delay+i*secondsPerBeat();const strong=i%beatsPerBar===0;scheduleTone(ctx,t,.055,strong?1500:950,Math.max(.025,state.clickVolume/100*.13),true);}}
-function scheduleNotes(ctx,time,duration,notes,velocity=90){notes.forEach((n,i)=>{const freq=440*Math.pow(2,(n-69)/12);scheduleTone(ctx,time,duration,freq,Math.max(.045,velocity/127*.20)/(1+i*.08),false);});}
-function scheduleTone(ctx,time,duration,freq,gainValue,click){
- const o=ctx.createOscillator(),g=ctx.createGain(),f=ctx.createBiquadFilter();
- const start=ctx.currentTime+Math.max(0,time),end=start+Math.max(.06,duration);
- o.type=click?'square':'triangle';o.frequency.setValueAtTime(freq,start);
- f.type='lowpass';f.frequency.setValueAtTime(click?2600:2100,start);f.Q.value=click?.3:.75;
- g.gain.setValueAtTime(.0001,start);g.gain.exponentialRampToValueAtTime(Math.max(.0002,gainValue),start+.012);
- g.gain.setValueAtTime(Math.max(.0002,gainValue*.82),Math.max(start+.013,end-.055));g.gain.exponentialRampToValueAtTime(.0001,end);
- o.connect(f).connect(g).connect(state.master||ctx.destination);o.start(start);o.stop(end+.03);state.sources.push(o);
- o.addEventListener('ended',()=>{const i=state.sources.indexOf(o);if(i>=0)state.sources.splice(i,1);},{once:true});
+function scheduleClick(ctx,countBeats,delay){const beatsPerBar=state.meter===6?6:state.meter,total=countBeats+state.degrees.length*beatsPerBar;for(let i=0;i<total;i++){if(i>=countBeats&&!state.click)continue;const t=delay+i*secondsPerBeat();playClickTone(i%beatsPerBar===0?1500:950,t,.055,Math.max(.03,state.clickVolume/100*.13),ctx);}}
+function scheduleNotes(ctx,time,duration,notes,velocity=90){notes.forEach((n,i)=>playPianoTone(n,time,duration,Math.max(.055,velocity/127*.22)/(1+i*.07),ctx));}
+function playPianoTone(midi,start=0,duration=.72,volume=.18,ctx=audioContext()){
+ const now=ctx.currentTime+Math.max(0,start),master=ctx.createGain(),filter=ctx.createBiquadFilter();
+ filter.type='lowpass';filter.frequency.setValueAtTime(2800,now);filter.Q.value=.65;
+ master.gain.setValueAtTime(.0001,now);
+ master.gain.exponentialRampToValueAtTime(Math.max(.001,volume),now+.012);
+ master.gain.exponentialRampToValueAtTime(Math.max(.0005,volume*.34),now+Math.min(.2,duration*.35));
+ master.gain.exponentialRampToValueAtTime(.0001,now+Math.max(.07,duration));
+ master.connect(filter);filter.connect(ctx.destination);
+ const base=440*Math.pow(2,(midi-69)/12);
+ [[1,1,'triangle'],[2,.26,'sine'],[3,.09,'sine']].forEach(([mult,level,type])=>{
+   const osc=ctx.createOscillator(),g=ctx.createGain();
+   osc.type=type;osc.frequency.setValueAtTime(base*mult,now);g.gain.value=level;
+   osc.connect(g);g.connect(master);osc.start(now);osc.stop(now+Math.max(.09,duration)+.04);state.sources.push(osc);
+   osc.addEventListener('ended',()=>{const i=state.sources.indexOf(osc);if(i>=0)state.sources.splice(i,1);},{once:true});
+ });
+}
+function playClickTone(freq,start,duration,volume,ctx=audioContext()){
+ const now=ctx.currentTime+Math.max(0,start),osc=ctx.createOscillator(),gain=ctx.createGain();
+ osc.type='square';osc.frequency.setValueAtTime(freq,now);
+ gain.gain.setValueAtTime(Math.max(.001,volume),now);gain.gain.exponentialRampToValueAtTime(.0001,now+duration);
+ osc.connect(gain);gain.connect(ctx.destination);osc.start(now);osc.stop(now+duration+.01);state.sources.push(osc);
 }
 
 function chordStartBeat(index,beats){return index*beats+(state.chordOffsets[index]||0)/4;}
