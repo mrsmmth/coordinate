@@ -2,130 +2,143 @@
 <html lang="ja">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#0b0e14">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <meta name="theme-color" content="#071b33">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="COORDINATE">
   <title>COORDINATE</title>
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="apple-touch-icon" href="./icon-192.png">
-  <link rel="stylesheet" href="./style.css?v=01">
+  <link rel="stylesheet" href="./style.css?v=020">
 </head>
-<body>
-<main class="app">
-  <header class="brand">
-    <div class="mini-logo" aria-hidden="true"><span>COORDI</span><strong>NATE</strong></div>
-    <div class="brand-copy"><p>CHORD & BACKING DESIGN</p><h1>COORDINATE</h1><span>進行を選び、伴奏を整え、MIDIへ</span></div>
-    <button id="guideButton" class="help-button" type="button" aria-label="使い方">?</button>
+<body data-theme="ocean">
+<main class="app-shell">
+  <header class="topbar">
+    <div class="brand-block">
+      <div class="brand-mark" aria-hidden="true"><span>C</span><i></i></div>
+      <div><div class="brand-kicker">MIDI DESIGN WORKSPACE</div><h1>COORDINATE</h1></div>
+    </div>
+    <div class="top-actions">
+      <label class="theme-label">THEME
+        <select id="themeSelect" aria-label="テーマ">
+          <option value="ocean">OCEAN</option>
+          <option value="minimal">MINIMAL</option>
+          <option value="junk">JUNK</option>
+          <option value="pop">POP</option>
+        </select>
+      </label>
+      <button id="guideButton" class="icon-button" type="button" aria-label="使い方">?</button>
+    </div>
   </header>
 
-  <nav class="tabs" aria-label="モード切替">
-    <button class="tab active" data-tab="progression" type="button">PROGRESSION</button>
-    <button class="tab" data-tab="backing" type="button">BACKING</button>
-  </nav>
-
-  <section id="progressionPanel" class="panel active">
-    <section class="control-card project-card">
-      <div class="section-title"><span>01</span><div><h2>PROJECT</h2><p>キー・BPM・拍子</p></div></div>
-      <div class="field-grid three">
-        <label>KEY<select id="keySelect"></select></label>
-        <label>BPM<input id="bpmInput" type="number" min="40" max="240" value="120"></label>
-        <label>拍子<select id="meterSelect"><option value="4">4/4</option><option value="3">3/4</option><option value="6">6/8</option></select></label>
+  <section class="transport frame-panel">
+    <div class="transport-main">
+      <button id="globalPlay" class="play-button" type="button"><span>▶</span> PLAY</button>
+      <button id="globalStop" class="stop-button" type="button">■</button>
+      <div id="bpmControl" class="value-drag" data-param="bpm" role="slider" aria-label="BPM" aria-valuemin="40" aria-valuemax="240" aria-valuenow="120" tabindex="0">
+        <small>BPM</small><strong id="bpmValue">120</strong><span>DRAG / DOUBLE TAP</span>
       </div>
-    </section>
-
-    <section class="control-card search-card">
-      <div class="section-title"><span>02</span><div><h2>SEARCH</h2><p>ジャンルと雰囲気で進行を探す</p></div></div>
-      <div class="filter-row"><div><div class="label">GENRE</div><div id="genreFilters" class="chip-grid"></div></div><div><div class="label">MOOD</div><div id="moodFilters" class="chip-grid"></div></div></div>
-      <label class="search-input">キーワード<input id="keywordInput" type="search" placeholder="王道 / おしゃれ / エモい / 4536"></label>
-    </section>
-
-    <section class="control-card library-card">
-      <div class="section-title"><span>03</span><div><h2>PROGRESSION LIBRARY</h2><p><span id="resultCount">0</span>件</p></div></div>
-      <div id="progressionList" class="progression-list"></div>
-    </section>
-
-    <section class="result-card current-card">
-      <div class="current-head"><div><span class="eyebrow">CURRENT PROGRESSION</span><h2 id="currentName">王道 4536</h2></div><div id="spreadStars" class="stars" aria-label="蔓延率"></div></div>
-      <div id="currentChords" class="chord-strip"></div>
-      <div class="action-grid">
-        <button id="playProgression" class="primary-button" type="button">▶ 進行を試聴</button>
-        <button id="stopButton" class="secondary-button" type="button">■ 停止</button>
-        <button id="exportChordsMidi" class="secondary-button" type="button">MIDI書き出し</button>
-      </div>
-    </section>
-
-    <section class="two-column">
-      <section class="control-card">
-        <div class="section-title"><span>04</span><div><h2>SIMILAR</h2><p>雰囲気の近い進行</p></div></div>
-        <div id="similarList" class="compact-list"></div>
-      </section>
-      <section class="control-card">
-        <div class="section-title"><span>05</span><div><h2>SUBSTITUTE</h2><p>コードを押して代替</p></div></div>
-        <div id="substituteTarget" class="target-tabs"></div>
-        <div id="substituteList" class="compact-list"></div>
-      </section>
-    </section>
+      <label class="compact-select">METER<select id="meterSelect"><option value="4">4 / 4</option><option value="3">3 / 4</option><option value="6">6 / 8</option></select></label>
+      <label class="compact-select">KEY<select id="keySelect"></select></label>
+    </div>
+    <div class="transport-options">
+      <label class="switch-row"><input id="clickToggle" type="checkbox"><span></span>CLICK</label>
+      <label class="switch-row"><input id="countInToggle" type="checkbox"><span></span>1 BAR COUNT</label>
+      <div class="click-level value-drag" data-param="clickVolume" role="slider" aria-label="クリック音量" aria-valuemin="0" aria-valuemax="100" aria-valuenow="65" tabindex="0"><small>CLICK VOL</small><strong id="clickVolumeValue">65</strong></div>
+    </div>
   </section>
 
-  <section id="backingPanel" class="panel">
-    <section class="control-card backing-source">
-      <div class="section-title"><span>01</span><div><h2>SOURCE</h2><p>進行画面と自動連動</p></div></div>
-      <div id="backingChords" class="chord-strip mini"></div>
-    </section>
+  <nav class="mode-tabs" aria-label="モード">
+    <button class="mode-tab active" data-tab="progression" type="button">PROGRESSION</button>
+    <button class="mode-tab" data-tab="backing" type="button">BACKING ENGINE</button>
+  </nav>
 
-    <section class="control-card">
-      <div class="section-title"><span>02</span><div><h2>STYLE</h2><p>伴奏パターンを選択</p></div></div>
-      <div class="field-grid two">
-        <label>パターン<select id="patternSelect"></select></label>
-        <label>グリッド<select id="gridSelect"><option value="8">8分</option><option value="16">16分</option><option value="24">24グリッド / Swing</option></select></label>
+  <section id="progressionPanel" class="mode-panel active">
+    <div class="workspace-grid progression-grid">
+      <aside class="frame-panel browser-panel">
+        <div class="panel-head"><div><span>LIBRARY</span><h2>Progression Browser</h2></div><b id="resultCount">0</b></div>
+        <label class="search-box"><span>⌕</span><input id="keywordInput" type="search" placeholder="王道 / おしゃれ / 4536"></label>
+        <div class="filter-title">GENRE</div><div id="genreFilters" class="chips"></div>
+        <div class="filter-title">MOOD</div><div id="moodFilters" class="chips"></div>
+        <div id="progressionList" class="progression-list"></div>
+      </aside>
+
+      <div class="main-stack">
+        <section class="frame-panel current-panel">
+          <div class="panel-head"><div><span>CURRENT</span><h2 id="currentName">王道 4536</h2></div><div id="spreadStars" class="spread-stars"></div></div>
+          <div id="currentChords" class="chord-strip"></div>
+          <div class="inline-actions"><button id="playProgression" class="primary-action" type="button">▶ PREVIEW</button><button id="exportChordsMidi" type="button">EXPORT MIDI</button></div>
+        </section>
+        <div class="split-panels">
+          <section class="frame-panel"><div class="panel-head compact"><div><span>RELATED</span><h2>Similar</h2></div></div><div id="similarList" class="compact-list"></div></section>
+          <section class="frame-panel"><div class="panel-head compact"><div><span>REPLACE</span><h2>Substitute</h2></div></div><div id="substituteTarget" class="target-tabs"></div><div id="substituteList" class="compact-list"></div></section>
+        </div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section class="control-card knobs-card">
-      <div class="section-title"><span>03</span><div><h2>ADJUST</h2><p>選んだ骨格をつまみで調整</p></div></div>
-      <div class="slider-grid">
-        <label>複雑さ <output id="complexityOut">3</output><input id="complexity" type="range" min="1" max="5" value="3"></label>
-        <label>変化量 <output id="variationOut">2</output><input id="variation" type="range" min="0" max="5" value="2"></label>
-        <label>アクセント差 <output id="accentDiffOut">3</output><input id="accentDiff" type="range" min="1" max="5" value="3"></label>
-        <label>ヒューマナイズ <output id="humanizeOut">1</output><input id="humanize" type="range" min="0" max="5" value="1"></label>
-        <label>スイング <output id="swingOut">0%</output><input id="swing" type="range" min="0" max="75" value="0"></label>
-        <label>音域 <output id="registerOut">3</output><input id="register" type="range" min="1" max="5" value="3"></label>
-        <label>音数 <output id="densityOut">3</output><input id="density" type="range" min="1" max="5" value="3"></label>
-        <label>オクターブ量 <output id="octaveOut">2</output><input id="octave" type="range" min="0" max="5" value="2"></label>
-      </div>
-    </section>
+  <section id="backingPanel" class="mode-panel">
+    <div class="backing-layout">
+      <section class="frame-panel source-strip">
+        <div class="panel-head compact"><div><span>LINKED PROGRESSION</span><h2>Backing Source</h2></div></div>
+        <div id="backingChords" class="chord-strip mini"></div>
+      </section>
 
-    <section class="control-card accent-card">
-      <div class="section-title"><span>04</span><div><h2>ACCENT</h2><p>各拍を押すたび なし → 弱 → 中 → 強</p></div></div>
-      <div id="accentButtons" class="accent-buttons"></div>
-      <p class="tiny-note">絶対値ではなく、MIDIベロシティの相対差として反映します。</p>
-    </section>
+      <section class="frame-panel theory-panel">
+        <div class="panel-head"><div><span>01 / FOUNDATION</span><h2>Theory Pattern</h2></div><p>骨格を選び、右側でどこまでも崩す</p></div>
+        <div id="patternCards" class="pattern-cards"></div>
+        <div class="mini-selects"><label>GRID<select id="gridSelect"><option value="8">8 GRID</option><option value="16">16 GRID</option><option value="24">24 / TRIPLET</option></select></label><label>STYLE FILTER<select id="styleFilter"><option value="ALL">ALL</option><option>王道</option><option>バラード</option><option>ポップ</option><option>ロック</option><option>スイング</option><option>3拍子</option></select></label></div>
+      </section>
 
-    <section class="result-card backing-actions">
-      <div><span class="eyebrow">BACKING PREVIEW</span><h2 id="backingSummary">Block / 4/4 / 120 BPM</h2></div>
-      <div class="action-grid">
-        <button id="playBacking" class="primary-button" type="button">▶ 伴奏を試聴</button>
-        <button id="stopBacking" class="secondary-button" type="button">■ 停止</button>
-        <button id="exportBackingMidi" class="secondary-button" type="button">伴奏MIDI書き出し</button>
-      </div>
-    </section>
+      <section class="frame-panel engine-panel">
+        <div class="panel-head"><div><span>02 / PERFORMANCE ENGINE</span><h2>Generate Character</h2></div><p>すべて実際のMIDI生成へ反映</p></div>
+        <div class="hero-knobs">
+          <div class="knob-unit hero" data-param="randomNotes" data-min="0" data-max="16" data-value="4"><div class="knob"><i></i><b id="randomNotesValue">4</b></div><strong>RANDOM NOTES</strong><small>追加・省略する音数</small></div>
+          <div class="knob-unit hero" data-param="freedom" data-min="0" data-max="100" data-value="35"><div class="knob"><i></i><b id="freedomValue">35</b></div><strong>FREEDOM</strong><small>セオリーを崩す強さ</small></div>
+          <div class="knob-unit hero" data-param="complexity" data-min="0" data-max="100" data-value="45"><div class="knob"><i></i><b id="complexityValue">45</b></div><strong>COMPLEXITY</strong><small>構造そのものの複雑さ</small></div>
+        </div>
+        <div class="knob-grid">
+          <div class="knob-unit" data-param="density" data-min="0" data-max="100" data-value="55"><div class="knob"><i></i><b id="densityValue">55</b></div><strong>DENSITY</strong></div>
+          <div class="knob-unit" data-param="variation" data-min="0" data-max="100" data-value="35"><div class="knob"><i></i><b id="variationValue">35</b></div><strong>VARIATION</strong></div>
+          <div class="knob-unit" data-param="rangeMotion" data-min="0" data-max="100" data-value="30"><div class="knob"><i></i><b id="rangeMotionValue">30</b></div><strong>RANGE MOTION</strong></div>
+          <div class="knob-unit" data-param="octave" data-min="0" data-max="100" data-value="30"><div class="knob"><i></i><b id="octaveValue">30</b></div><strong>OCTAVE</strong></div>
+          <div class="knob-unit" data-param="swing" data-min="0" data-max="75" data-value="0"><div class="knob"><i></i><b id="swingValue">0</b></div><strong>SWING</strong></div>
+          <div class="knob-unit" data-param="humanize" data-min="0" data-max="100" data-value="15"><div class="knob"><i></i><b id="humanizeValue">15</b></div><strong>HUMANIZE</strong></div>
+        </div>
+      </section>
+
+      <section class="frame-panel range-panel">
+        <div class="panel-head"><div><span>03 / PITCH WINDOW</span><h2>Effective Range</h2></div><p>上下のハンドルで挟み撃ち</p></div>
+        <div class="range-workspace">
+          <div class="piano-ghost" aria-hidden="true"></div>
+          <div id="dualRange" class="dual-range" role="group" aria-label="有効音域">
+            <div class="range-track"><div id="rangeFill" class="range-fill"></div><button id="rangeHighHandle" class="range-handle high" type="button" aria-label="最高音"><span id="rangeHighLabel">C6</span></button><button id="rangeLowHandle" class="range-handle low" type="button" aria-label="最低音"><span id="rangeLowLabel">C2</span></button></div>
+          </div>
+          <div class="range-copy"><strong id="rangeReadout">C2 — C6</strong><span>生成音は必ずこの範囲内</span></div>
+        </div>
+      </section>
+
+      <section class="frame-panel accent-panel">
+        <div class="panel-head"><div><span>04 / GROOVE</span><h2>16 Step Accent</h2></div><p>クリックで 0 → 1 → 2 → 3</p></div>
+        <div class="accent-layout">
+          <div id="accentButtons" class="accent-grid"></div>
+          <div class="accent-knobs">
+            <div class="knob-unit" data-param="accentWidth" data-min="0" data-max="100" data-value="55"><div class="knob"><i></i><b id="accentWidthValue">55</b></div><strong>ACCENT WIDTH</strong><small>強弱差を滑らか ↔ 極端</small></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="frame-panel export-panel">
+        <div><span>LIVE RESULT</span><h2 id="backingSummary">Theory / 4/4 / 120 BPM</h2><p id="engineSummary">Complexity 45 · Freedom 35 · Random 4</p></div>
+        <div class="inline-actions"><button id="playBacking" class="primary-action" type="button">▶ GENERATE & PLAY</button><button id="regenerateBacking" type="button">↻ REGENERATE</button><button id="exportBackingMidi" type="button">EXPORT MIDI</button></div>
+      </section>
+    </div>
   </section>
 </main>
 
-<dialog id="guideDialog" class="guide-dialog">
-  <form method="dialog" class="guide-panel">
-    <button class="dialog-close" value="close" aria-label="閉じる">×</button>
-    <div class="guide-logo">COORDINATE</div>
-    <p>コード進行を探し、似た進行や代替コードを試し、伴奏へ連動してMIDIに書き出すツールです。</p>
-    <h3>PROGRESSION</h3><p>ジャンル・雰囲気から進行を検索。星は独自の「蔓延率」です。</p>
-    <h3>BACKING</h3><p>パターンを選び、複雑さ・変化量・アクセント・スイングなどを調整します。</p>
-    <button class="primary-button wide" value="ok">OK</button>
-  </form>
-</dialog>
-
-<script src="./app.js?v=01"></script>
+<dialog id="guideDialog" class="guide-dialog"><form method="dialog" class="guide-card"><button class="dialog-close" value="close">×</button><span>COORDINATE</span><h2>音楽を選び、崩し、MIDIへ。</h2><p>数値はドラッグで滑らかに変更できます。上下左右どちらへ動かしても操作でき、ダブルタップ／ダブルクリックで直接入力できます。</p><p>BACKING ENGINEではセオリーパターンを骨格に、Complexity・Freedom・Random Notes・Range Motionなどを組み合わせて毎回異なる伴奏を生成します。</p><button class="primary-action wide" value="ok">OK</button></form></dialog>
+<script src="./app.js?v=020"></script>
 <script>if('serviceWorker' in navigator){addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js'));}</script>
 </body>
 </html>

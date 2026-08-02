@@ -1,16 +1,15 @@
-# COORDINATE v0.1 PROTOTYPE
+COORDINATE v0.2 UI + GENERATIVE ENGINE
 
-コード進行検索・試聴・類似進行・代替コード・伴奏生成・MIDI書き出しを統合したPWA試作版です。
-
-- ジャンル／雰囲気検索
-- 独自指標「蔓延率」星5表示
-- キー変更
-- 似たコード進行
-- 代替コード
-- Web Audio試聴
-- バッキングパターン
-- 4/4・3/4・6/8
-- 8分・16分・24グリッド／Swing
-- 複雑さ、変化量、アクセント差、ヒューマナイズ、音域、音数、オクターブ量
-- 拍単位アクセント
-- Standard MIDI File書き出し
+- Progression browser / genre & mood filters
+- Similar progressions and substitute chords
+- Drag BPM and click volume; double click/tap for direct entry
+- Metronome click and optional one-bar count-in
+- 12 theory backing foundations
+- Smooth rotary controls with direct-value entry
+- Random Notes / Freedom / Complexity weighted as primary generation controls
+- 16-step, four-level accent editor linked to Accent Width
+- Dual-handle effective pitch range and Range Motion
+- Ocean / Minimal / Junk / Pop themes
+- Web Audio preview
+- Progression and generated backing MIDI export
+- Offline PWA support
