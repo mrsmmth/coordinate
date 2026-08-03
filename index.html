@@ -10,7 +10,7 @@
   <title>COORDINATE</title>
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="apple-touch-icon" href="./icon-192.png">
-  <link rel="stylesheet" href="./style.css?v=070">
+  <link rel="stylesheet" href="./style.css?v=080">
 </head>
 <body data-theme="ocean">
 <main class="app-shell">
@@ -129,12 +129,9 @@
       </section>
 
       <section class="frame-panel accent-panel">
-        <div class="panel-head"><div><span>04 / GROOVE</span><h2>16 Step Accent</h2></div><p>クリックで 0 → 1 → 2 → 3</p></div>
+        <div class="panel-head"><div><span>04 / RIGHT HAND CHORD</span><h2>右手3和音の白玉位置</h2></div><p>選択した16分位置で、ルート・3度・5度の白玉を鳴らす</p></div>
         <div class="accent-layout">
           <div id="accentButtons" class="accent-grid"></div>
-          <div class="accent-knobs">
-            <div class="knob-unit" data-param="accentWidth" data-min="0" data-max="100" data-value="55"><div class="knob"><i></i><b id="accentWidthValue">55</b></div><strong>ACCENT WIDTH</strong><small>強弱差を滑らか ↔ 極端</small></div>
-          </div>
         </div>
       </section>
 
@@ -147,7 +144,7 @@
 </main>
 
 <dialog id="guideDialog" class="guide-dialog"><form method="dialog" class="guide-card"><button class="dialog-close" value="close">×</button><span>COORDINATE</span><h2>音楽を選び、崩し、MIDIへ。</h2><p>数値はドラッグで滑らかに変更できます。上下左右どちらへ動かしても操作でき、ダブルタップ／ダブルクリックで直接入力できます。</p><p>BACKING ENGINEではセオリーパターンを骨格に、各ノブで演奏を調整します。白いコードブロックは両端で開始・終了を調整でき、中央ドラッグで長さを保ったまま移動します。すべて16分音符へ吸着します。</p><button class="primary-action wide" value="ok">OK</button></form></dialog>
-<script src="./app.js?v=070"></script>
+<script src="./app.js?v=080"></script>
 <script>if('serviceWorker' in navigator){addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js'));}</script>
 </body>
 </html>
