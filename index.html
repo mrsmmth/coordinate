@@ -10,7 +10,7 @@
   <title>COORDINATE</title>
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="apple-touch-icon" href="./icon-192.png">
-  <link rel="stylesheet" href="./style.css?v=060">
+  <link rel="stylesheet" href="./style.css?v=070">
 </head>
 <body data-theme="ocean">
 <main class="app-shell">
@@ -89,14 +89,14 @@
       </section>
 
       <section class="frame-panel piano-roll-panel">
-        <div class="panel-head compact"><div><span>LIVE MIDI</span><h2>Performance View</h2></div><p>左手＝青 / 右手＝ターコイズ / 再生位置＝黄</p></div>
+        <div class="panel-head compact"><div><span>LIVE MIDI</span><h2>Performance View</h2></div><div class="roll-legend"><span>ピンチ：拡大縮小</span><span>ドラッグ：移動</span><button id="resetPianoRoll" type="button">全体表示</button></div></div>
         <div id="pianoRollViewport" class="piano-roll-viewport"><canvas id="pianoRollCanvas" aria-label="生成されたMIDIパターン"></canvas><div id="playhead" class="playhead"></div></div>
       </section>
 
       <section class="frame-panel theory-panel">
         <div class="panel-head"><div><span>01 / FOUNDATION</span><h2>Theory Pattern</h2></div><p>骨格を選び、右側でどこまでも崩す</p></div>
         <div id="patternCards" class="pattern-cards"></div>
-        <div class="mini-selects"><label>LEFT HAND<select id="leftPatternSelect"><option value="rootWhole">ルート白玉</option><option value="rootFifth">ルート＋5度</option><option value="octave">低音オクターブ</option><option value="rootThenFifth">ルート→5度</option><option value="rootThenOctave">ルート→オクターブ</option><option value="walk">ルート→5度→オクターブ</option><option value="beat13">1拍目ルート・3拍目5度</option><option value="waltz">ワルツ型</option><option value="sixEight">6/8型</option><option value="sync">シンコペーション型</option></select></label><label>RIGHT HAND<select id="rightPatternSelect"><option value="auto">選択スタイル連動</option><option value="block">ブロックコード</option><option value="quarter">4分コード</option><option value="eighth">8分コード</option><option value="offbeat">裏拍コード</option><option value="arpUp">アルペジオ上昇</option><option value="arpDown">アルペジオ下降</option><option value="arpWave">往復アルペジオ</option><option value="alternate">左右交互</option><option value="ballad">バラード型</option><option value="pop">ポップ型</option><option value="rock">ロック型</option><option value="city">シティポップ型</option><option value="waltz">3拍子型</option><option value="sixEight">6/8型</option><option value="sync">シンコペーション型</option></select></label><label>TIME GRID<select id="gridSelect"><option value="16">16分固定</option></select></label><label>STYLE FILTER<select id="styleFilter"><option value="ALL">ALL</option><option>王道</option><option>バラード</option><option>ポップ</option><option>ロック</option><option>スイング</option><option>3拍子</option></select></label></div>
+        <div class="mini-selects"><label>LEFT HAND<select id="leftPatternSelect"><option value="rootWhole">ルート白玉</option><option value="rootFifth">ルート＋5度</option><option value="octave">低音オクターブ</option><option value="rootThenFifth">ルート→5度</option><option value="rootThenOctave">ルート→オクターブ</option><option value="walk">ルート→5度→オクターブ</option><option value="beat13">1拍目ルート・3拍目5度</option><option value="waltz">ワルツ型</option><option value="sixEight">6/8型</option><option value="sync">シンコペーション型</option></select></label><label>RIGHT HAND<select id="rightPatternSelect"><option value="auto">選択スタイル連動</option><option value="block">ブロックコード</option><option value="quarter">4分コード</option><option value="eighth">8分コード</option><option value="offbeat">裏拍コード</option><option value="arpUp">アルペジオ上昇</option><option value="arpDown">アルペジオ下降</option><option value="arpWave">往復アルペジオ</option><option value="alternate">左右交互</option><option value="ballad">バラード型</option><option value="pop">ポップ型</option><option value="rock">ロック型</option><option value="city">シティポップ型</option><option value="waltz">3拍子型</option><option value="sixEight">6/8型</option><option value="sync">シンコペーション型</option></select></label><label>RHYTHM GRID<select id="gridSelect"><option value="4">4分</option><option value="8">8分</option><option value="16" selected>16分</option><option value="mix">MIX（案ごとに抽選）</option></select><small id="activeGridLabel">現在：16分</small></label><label>STYLE FILTER<select id="styleFilter"><option value="ALL">ALL</option><option>王道</option><option>バラード</option><option>ポップ</option><option>ロック</option><option>スイング</option><option>3拍子</option></select></label></div>
       </section>
 
       <section class="frame-panel engine-panel">
@@ -113,7 +113,7 @@
           <div class="knob-unit" data-param="octave" data-min="0" data-max="100" data-value="30"><div class="knob"><i></i><b id="octaveValue">30</b></div><strong>OCTAVE</strong><small>オクターブ配置の量</small></div>
           <div class="knob-unit" data-param="swing" data-min="0" data-max="75" data-value="0"><div class="knob"><i></i><b id="swingValue">0</b></div><strong>SWING</strong><small>裏拍を後ろへずらす量</small></div>
           <div class="knob-unit" data-param="humanize" data-min="0" data-max="100" data-value="15"><div class="knob"><i></i><b id="humanizeValue">15</b></div><strong>HUMANIZE</strong><small>発音と強さの揺れ</small></div><div class="knob-unit" data-param="melodic" data-min="0" data-max="100" data-value="65"><div class="knob"><i></i><b id="melodicValue">65</b></div><strong>MELODIC</strong><small>単音が線として動く確率</small></div><div class="knob-unit" data-param="chordChance" data-min="0" data-max="100" data-value="45"><div class="knob"><i></i><b id="chordChanceValue">45</b></div><strong>CHORD CHANCE</strong><small>複数音を同時に鳴らす確率</small></div><div class="knob-unit" data-param="chordThickness" data-min="1" data-max="4" data-value="3"><div class="knob"><i></i><b id="chordThicknessValue">3</b></div><strong>CHORD THICKNESS</strong><small>和音になった時の最大音数</small></div>
-          <div class="knob-unit" data-param="noteLength" data-min="0" data-max="100" data-value="78"><div class="knob"><i></i><b id="noteLengthValue">78</b></div><strong>音の長さ</strong><small>ノートを次の発音まで伸ばす量</small></div>
+          <div class="knob-unit" data-param="noteLength" data-min="0" data-max="100" data-value="65"><div class="knob"><i></i><b id="noteLengthValue">65</b></div><strong>音の長さ</strong><small>全ノートの語尾を一律で伸縮</small></div>
         </div>
       </section>
 
@@ -147,7 +147,7 @@
 </main>
 
 <dialog id="guideDialog" class="guide-dialog"><form method="dialog" class="guide-card"><button class="dialog-close" value="close">×</button><span>COORDINATE</span><h2>音楽を選び、崩し、MIDIへ。</h2><p>数値はドラッグで滑らかに変更できます。上下左右どちらへ動かしても操作でき、ダブルタップ／ダブルクリックで直接入力できます。</p><p>BACKING ENGINEではセオリーパターンを骨格に、各ノブで演奏を調整します。白いコードブロックは両端で開始・終了を調整でき、中央ドラッグで長さを保ったまま移動します。すべて16分音符へ吸着します。</p><button class="primary-action wide" value="ok">OK</button></form></dialog>
-<script src="./app.js?v=060"></script>
+<script src="./app.js?v=070"></script>
 <script>if('serviceWorker' in navigator){addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js'));}</script>
 </body>
 </html>
